@@ -80,6 +80,7 @@
   h1.title{
     font-size:clamp(48px, 9vw, 128px);
     font-weight:900;
+    font-style:italic;
     line-height:0.88;
     letter-spacing:-0.03em;
     text-transform:uppercase;
@@ -116,7 +117,7 @@
   section{padding:90px 0;border-top:1px solid var(--line);}
   .section-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px;}
   .kicker{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;font-weight:700;}
-  h2.section-title{font-size:clamp(30px,4.5vw,56px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;line-height:1;}
+  h2.section-title{font-size:clamp(30px,4.5vw,56px);font-weight:800;font-style:italic;text-transform:uppercase;letter-spacing:-0.02em;line-height:1;}
   .section-desc{max-width:440px;color:var(--gray);font-size:13px;line-height:1.7;}
 
   /* CHARTS GRID */
@@ -190,7 +191,7 @@
   .event-card h4{font-family:'Unbounded';font-size:19px;text-transform:uppercase;margin-bottom:18px;line-height:1.15;padding-right:60px;}
   .event-card .ev-stats{display:flex;gap:24px;}
   .ev-stat b{display:block;font-family:'Unbounded';font-size:24px;color:var(--yellow);font-weight:800;}
-  .ev-stat span{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;}
+  .ev-stat span{display:block;margin-top:6px;font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;}
   .ev-stat.highlight b{
     display:inline-block;color:#000;background:var(--yellow);
     padding:2px 10px;border-radius:6px;
@@ -226,6 +227,11 @@
   }
   .lb-row{cursor:pointer;}
   .medal{font-size:16px;margin-left:2px;}
+  .lb-rank.is-medal{
+    width:30px;height:30px;border-radius:50%;background:var(--yellow);
+    display:flex;align-items:center;justify-content:center;
+    color:#000;font-weight:800;font-size:14px;
+  }
 
   @media (max-width:860px){
     .lb-row{grid-template-columns:28px 32px 1fr auto;}
@@ -294,6 +300,28 @@
   .map-placeholder .map-icon{font-size:36px;margin-bottom:16px;}
   .map-placeholder p{color:var(--gray);font-size:13px;max-width:420px;margin:0 auto;line-height:1.7;}
 
+  /* MAPS */
+  .maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px;}
+  .map-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--black2);}
+  .map-card-title{padding:14px 18px;font-family:'Unbounded';font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.04em;}
+  .map-card iframe{width:100%;height:320px;border:0;display:block;filter:grayscale(0.15) contrast(1.05);}
+
+  /* FEEDBACK DANUBIO */
+  .fb-score-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:32px;}
+  .fb-score-card{background:var(--black2);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;}
+  .fb-score-num{font-family:'Unbounded';font-weight:900;font-size:34px;color:var(--yellow);line-height:1;}
+  .fb-score-label{margin-top:8px;font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;}
+  .fb-meta-strip{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:32px;padding:20px 24px;border:1px solid var(--line);border-radius:14px;background:var(--black2);}
+  .fb-meta-item b{display:block;font-family:'Unbounded';font-weight:800;font-size:22px;color:#fff;}
+  .fb-meta-item span{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;}
+  .fb-quotes{display:flex;gap:16px;overflow-x:auto;padding-bottom:14px;margin-top:32px;scroll-snap-type:x mandatory;}
+  .fb-quotes::-webkit-scrollbar{height:8px;}
+  .fb-quote{
+    flex:0 0 auto;width:300px;scroll-snap-align:start;
+    background:var(--black2);border:1px solid var(--line);border-left:3px solid var(--yellow);border-radius:10px;
+    padding:18px 20px;font-size:13px;line-height:1.6;color:#ddd;
+  }
+
   /* footer */
   footer{padding:60px 0 40px;text-align:center;color:var(--gray);font-size:12px;}
   footer b{color:var(--yellow);}
@@ -324,10 +352,10 @@
       <a href="#stats">Resumen</a>
       <a href="#ranking">Voluntarios</a>
       <a href="#eventos">Eventos</a>
-      <a href="#galeria">Temporada</a>
       <a href="#equipo">Equipo</a>
       <a href="#mapa">Mapa</a>
       <a href="#analitica">Analítica</a>
+      <a href="#feedback-danubio">Feedback</a>
     </div>
   </div>
 </nav>
@@ -423,19 +451,6 @@
   </div>
 </section>
 
-<section id="galeria">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <div class="kicker">Recuerdos</div>
-        <h2 class="section-title">Así fue la<br>temporada</h2>
-      </div>
-      <p class="section-desc">Un repaso fotográfico en orden cronológico. Haz clic en cualquier foto para verla en grande.</p>
-    </div>
-    <div class="gallery-scroll" id="galleryScroll"></div>
-  </div>
-</section>
-
 <section id="equipo">
   <div class="logo-watermark wm-demo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 792"><path d="M298,697 L296,697 L295,696 L282,696 L281,697 L280,697 L279,698 L274,700 L268,706 L268,707 L266,709 L266,710 L264,713 L264,715 L263,716 L263,720 L262,721 L262,725 L263,726 L263,730 L264,731 L264,733 L266,735 L266,736 L270,740 L271,740 L274,742 L276,742 L277,743 L286,743 L287,742 L289,742 L290,741 L292,741 L294,739 L295,739 L297,737 L298,737 L302,733 L302,732 L304,730 L304,729 L306,726 L306,724 L307,723 L307,720 L308,719 L308,712 L307,711 L307,708 L306,707 L306,705 L304,703 L304,702 Z M342,654 L341,654 L340,653 L338,653 L337,652 L327,652 L326,653 L324,653 L323,654 L321,654 L319,656 L318,656 L316,658 L315,658 L312,661 L312,662 L308,667 L308,669 L306,672 L306,677 L305,678 L305,681 L306,682 L306,687 L307,688 L308,691 L314,697 L315,697 L318,699 L330,699 L331,698 L333,698 L334,697 L339,695 L346,688 L346,687 L350,680 L350,676 L351,675 L351,668 L350,667 L350,664 L349,663 L348,660 Z M384,610 L382,610 L381,609 L377,609 L376,608 L375,608 L374,609 L368,609 L367,610 L366,610 L365,611 L360,613 L354,619 L354,620 L352,622 L352,623 L350,626 L350,628 L349,629 L349,643 L350,644 L352,649 L356,653 L357,653 L360,655 L362,655 L363,656 L372,656 L373,655 L375,655 L376,654 L378,654 L379,653 L380,653 L382,651 L383,651 L388,646 L388,645 L390,643 L390,642 L393,637 L393,634 L394,633 L394,624 L393,623 L393,620 L392,619 L391,616 L387,612 L386,612 Z M716,578 L714,578 L713,577 L710,577 L709,576 L705,576 L704,577 L700,577 L699,578 L697,578 L696,579 L695,579 L693,581 L692,581 L685,588 L685,589 L682,594 L682,596 L681,597 L681,601 L680,602 L680,606 L681,607 L681,611 L682,612 L682,614 L684,616 L684,617 L688,621 L689,621 L692,623 L694,623 L695,624 L703,624 L704,623 L707,623 L708,622 L713,620 L715,618 L716,618 L722,611 L722,610 L724,607 L724,605 L725,604 L725,601 L726,600 L726,593 L725,592 L725,589 L724,588 L724,586 L722,584 L722,583 Z M692,530 L690,530 L689,529 L678,529 L677,530 L675,530 L674,531 L669,533 L662,540 L662,541 L660,543 L660,544 L659,545 L659,547 L658,548 L658,551 L657,552 L657,561 L658,562 L658,564 L659,565 L659,567 L661,569 L661,570 L666,574 L667,574 L668,575 L670,575 L671,576 L681,576 L682,575 L684,575 L685,574 L687,574 L689,572 L690,572 L692,570 L693,570 L698,564 L698,563 L701,558 L701,556 L702,555 L702,542 L701,541 L701,539 L700,538 L700,537 L694,531 L693,531 Z M664,481 L656,481 L655,482 L652,482 L651,483 L646,485 L638,493 L638,494 L635,499 L635,501 L634,502 L634,515 L635,516 L635,518 L636,519 L636,520 L638,522 L638,523 L643,527 L645,527 L646,528 L649,528 L650,529 L655,529 L656,528 L659,528 L660,527 L662,527 L663,526 L666,525 L669,522 L670,522 L675,516 L675,515 L677,512 L677,510 L678,509 L678,506 L679,505 L679,497 L678,496 L678,493 L677,492 L676,489 L671,484 L670,484 L667,482 L665,482 Z M491,249 L66,324 L301,442 L257,708 L447,515 L682,633 Z M411,64 L398,61 L373,61 L344,70 L320,86 L308,98 L294,118 L287,133 L281,155 L280,179 L282,192 L287,207 L296,222 L309,235 L320,242 L349,250 L370,249 L391,243 L405,236 L427,219 L448,191 L457,169 L461,149 L461,130 L458,114 L445,88 L429,73 Z" fill="#161616" fill-rule="nonzero"/></svg></div>
   <div class="container">
@@ -475,9 +490,10 @@
         <div class="kicker">Por dónde hemos pasado</div>
         <h2 class="section-title">Mapa de<br>rutas</h2>
       </div>
-      <p class="section-desc">Próximamente: la ubicación de cada ruta y evento de la temporada.</p>
+      <p class="section-desc">Ubicación de cada ruta y evento de la temporada. Iremos añadiendo más a medida que lleguen los enlaces.</p>
     </div>
-    <div class="map-placeholder" id="mapPlaceholder">
+    <div class="maps-grid" id="mapsGrid"></div>
+    <div class="map-placeholder" id="mapPlaceholder" style="display:none;">
       <div class="map-icon">📍</div>
       <p>Aquí verás un mapa interactivo con todas las rutas y puntos de encuentro de la temporada en cuanto añadamos los enlaces de Google Maps de cada evento.</p>
     </div>
@@ -512,6 +528,39 @@
   </div>
 </section>
 
+<section id="feedback-danubio">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Viaje internacional</div>
+        <h2 class="section-title">Análisis feedback<br>Danubio</h2>
+      </div>
+      <p class="section-desc" id="fbResponseCount">Basado en las respuestas del formulario de valoración enviado a los voluntarios que participaron en el viaje.</p>
+    </div>
+
+    <div class="fb-meta-strip" id="fbMetaStrip"></div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <h3>Valoración media por categoría (sobre 10)</h3>
+      <div class="chart-wrap"><canvas id="chartFbScores"></canvas></div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="card">
+        <h3>¿Viaje de 3 o de 5 días?</h3>
+        <div class="chart-wrap"><canvas id="chartFbLength"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Próximos destinos más mencionados</h3>
+        <div class="chart-wrap"><canvas id="chartFbDestinos"></canvas></div>
+      </div>
+    </div>
+
+    <div class="fb-quotes-head" style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray);margin-top:32px;margin-bottom:12px;font-weight:700;">Lo que opinaron los voluntarios (desliza →)</div>
+    <div class="fb-quotes" id="fbQuotes"></div>
+  </div>
+</section>
+
 <footer>
   Hecho con <b>♥</b> para el equipo de voluntariado de <b>MadridPatina</b> — Temporada 25/26
 </footer>
@@ -541,7 +590,7 @@
 </div>
 
 <script>
-const DATA = {"events": [{"col": 21, "name": "RUTA SEM", "tipo": "RX", "date": "2025-09-21T00:00:00", "total_hours": 36, "participants": 18}, {"col": 22, "name": "EVENTO SEM", "tipo": "RX", "date": "2025-09-21T00:00:00", "total_hours": 100, "participants": 17, "foto": "images/eventos/evento-sem.jpg"}, {"col": 23, "name": "COSTA BLANCA", "tipo": "VN", "date": "2025-09-26T00:00:00", "total_hours": 180, "participants": 15, "foto": "images/eventos/costa-blanca.jpg"}, {"col": 24, "name": "SANBLAS", "tipo": "RX", "date": "2025-10-26T00:00:00", "total_hours": 54, "participants": 18, "foto": "images/eventos/sanblas.jpg"}, {"col": 25, "name": "RUTA LUCES", "tipo": "RX", "date": "2025-12-13T00:00:00", "total_hours": 57, "participants": 19, "foto": "images/eventos/ruta-luces.jpg"}, {"col": 26, "name": "ENSANCHE VALLECAS", "tipo": "RX", "date": "2026-01-25T00:00:00", "total_hours": 57, "participants": 19, "foto": "images/eventos/ensanche-vallecas.jpg"}, {"col": 27, "name": "HIELO", "tipo": "EV", "date": "2026-02-07T00:00:00", "total_hours": 60, "participants": 15, "foto": "images/eventos/hielo.jpg"}, {"col": 28, "name": "CURSO VOLUNT.", "tipo": "MC", "date": "2026-03-20T00:00:00", "total_hours": 20, "participants": 10}, {"col": 29, "name": "ANILLO SUR", "tipo": "RX", "date": "2026-03-22T00:00:00", "total_hours": 48, "participants": 16, "foto": "images/eventos/anillo-sur.jpg"}, {"col": 30, "name": "ANILLO NORTE", "tipo": "RX", "date": "2026-04-18T00:00:00", "total_hours": 45, "participants": 15, "foto": "images/eventos/anillo-norte.jpg"}, {"col": 31, "name": "PRIMEROS AUXILIOS", "tipo": "MC", "date": "2026-05-30T00:00:00", "total_hours": 31.5, "participants": 7}, {"col": 32, "name": "DIA PATIN SANSE", "tipo": "EV", "date": "2026-05-31T00:00:00", "total_hours": 60, "participants": 15, "foto": "images/eventos/dia-patin-sanse.jpg"}, {"col": 33, "name": "JUEGOS", "tipo": "MC", "date": "2026-06-05T00:00:00", "total_hours": 14, "participants": 7}, {"col": 34, "name": "CUESTAS", "tipo": "MC", "date": "2026-06-07T00:00:00", "total_hours": 22, "participants": 11}, {"col": 35, "name": "DIA DEPORTE SANSE", "tipo": "EV", "date": "2026-06-07T00:00:00", "total_hours": 5, "participants": 5}, {"col": 36, "name": "RUTA VERANO", "tipo": "RX", "date": "2026-06-13T00:00:00", "total_hours": 69, "participants": 23, "foto": "images/eventos/ruta-verano.jpg"}, {"col": 37, "name": "DANUBIO", "tipo": "VI", "date": "2026-06-24T00:00:00", "total_hours": 400, "participants": 20, "foto": "images/eventos/danubio.jpg"}], "volunteers": [{"nombre": "ALBERTO DE LA FUENTE", "tipo": "V", "total": 3, "hours": {"SANBLAS": 3}, "n_events": 1, "genero": "M", "edad": 48}, {"nombre": "ALEJANDRA MARTÍNEZ FERNÁNDEZ", "tipo": "V", "total": 22.5, "hours": {"ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "RUTA VERANO": 3}, "n_events": 7, "genero": "F", "edad": 39, "foto": "foto_13774.jpg", "foto_web": "images/socios/alejandra-martinez-fernandez.jpg"}, {"nombre": "ANTÍA OUBIÑA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 42, "foto": "foto_12021.jpg", "foto_web": "images/socios/antia-oubina.jpg"}, {"nombre": "ARANTXA CLEMENTE MORCILLO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 35, "foto": "foto_13259.jpg", "foto_web": "images/socios/arantxa-clemente-morcillo.jpg"}, {"nombre": "BEATRIZ CAMAÑO", "tipo": "V", "total": 3, "hours": {"RUTA LUCES": 3}, "n_events": 1, "genero": "F", "edad": 29, "foto": "foto_12455.jpg", "foto_web": "images/socios/beatriz-camano.jpg"}, {"nombre": "BEATRIZ DELGADO", "tipo": "V", "total": 20, "hours": {"DANUBIO": 20}, "n_events": 1, "genero": "F", "edad": 48, "foto": "foto_9863.jpg", "foto_web": "images/socios/beatriz-delgado.jpg"}, {"nombre": "CARLOS GARCÍA ABELLA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 46, "foto": "foto_9318.jpg", "foto_web": "images/socios/carlos-garcia-abella.jpg"}, {"nombre": "CARLOS SANZ MORENO", "tipo": "V", "total": 32, "hours": {"COSTA BLANCA": 12, "DANUBIO": 20}, "n_events": 2, "genero": "M", "edad": 41, "foto": "foto_10994.jpg", "foto_web": "images/socios/carlos-sanz-moreno.jpg"}, {"nombre": "CHARO VIRTO MATÍAS", "tipo": "V", "total": 23, "hours": {"SANBLAS": 3, "DANUBIO": 20}, "n_events": 2, "genero": "F", "edad": 57, "foto": "foto_3259.jpg", "foto_web": "images/socios/charo-virto-matias.jpg"}, {"nombre": "DANIEL SERRANO", "tipo": "M", "total": 46.5, "hours": {"EVENTO SEM": 8, "ENSANCHE VALLECAS": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 8, "genero": "M", "edad": 40, "foto": "foto_12912.jpg", "foto_web": "images/socios/daniel-serrano.jpg"}, {"nombre": "DAVID GAMITO", "tipo": "V", "total": 14, "hours": {"EVENTO SEM": 8, "RUTA LUCES": 3, "ANILLO SUR": 3}, "n_events": 3, "genero": "M", "edad": 33, "foto": "foto_13989.jpg", "foto_web": "images/socios/david-gamito.jpg"}, {"nombre": "DAVID RIVAS COBOS", "tipo": "M", "total": 6, "hours": {"ANILLO SUR": 3, "RUTA VERANO": 3}, "n_events": 2, "genero": "M", "edad": 47, "foto": "foto_11845.jpg", "foto_web": "images/socios/david-rivas-cobos.jpg"}, {"nombre": "ELENA DE DIOS", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 41, "foto": "foto_9130.jpg", "foto_web": "images/socios/elena-de-dios.jpg"}, {"nombre": "MARÍA JOSÉ RODRÍGUEZ SANCHEZ BLANCA", "tipo": "V", "total": 43, "hours": {"RUTA SEM": 2, "COSTA BLANCA": 12, "ENSANCHE VALLECAS": 3, "ANILLO NORTE": 3, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 6, "genero": "F", "edad": 39, "foto": "foto_14926.jpg", "foto_web": "images/socios/maria-jose-rodriguez-sanchez-blanca.jpg"}, {"nombre": "ENRIQUE PARELLADA", "tipo": "V", "total": 5, "hours": {"RUTA SEM": 2, "SANBLAS": 3}, "n_events": 2, "genero": "M", "edad": 60, "foto": "foto_7873.jpg", "foto_web": "images/socios/enrique-parellada.jpg"}, {"nombre": "ESTHER BOCANEGRA", "tipo": "V", "total": 21, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO NORTE": 3, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3}, "n_events": 8, "genero": "F", "edad": 53, "foto": "foto_7036.jpg", "foto_web": "images/socios/esther-bocanegra.jpg"}, {"nombre": "FERNANDO DORADO", "tipo": "V", "total": 35, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "RUTA LUCES": 3, "HIELO": 4, "JUEGOS": 2, "DANUBIO": 20}, "n_events": 6, "genero": "M", "edad": 45, "foto": "foto_12974.jpg", "foto_web": "images/socios/fernando-dorado.jpg"}, {"nombre": "FRANCISCO AMADO FERRERA", "tipo": "V", "total": 22.5, "hours": {"ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 41, "foto": "foto_13775.jpg", "foto_web": "images/socios/francisco-amado-ferrera.jpg"}, {"nombre": "FRANCISCO PARIENTE", "tipo": "M", "total": 16, "hours": {"COSTA BLANCA": 12, "DIA PATIN SANSE": 4}, "n_events": 2, "genero": "M", "edad": 44, "foto": "foto_8987.jpg", "foto_web": "images/socios/francisco-pariente.jpg"}, {"nombre": "HELENA GASCON COLOMA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 32, "foto": "foto_13344.jpg", "foto_web": "images/socios/helena-gascon-coloma.jpg"}, {"nombre": "ICIAR MAULEÓN", "tipo": "M", "total": 62, "hours": {"RUTA SEM": 2, "EVENTO SEM": 6, "COSTA BLANCA": 12, "RUTA LUCES": 3, "HIELO": 4, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 12, "genero": "F", "edad": 50, "foto": "foto_7203.jpg", "foto_web": "images/socios/iciar-mauleon.jpg"}, {"nombre": "IRENE RODRÍGUEZ", "tipo": "M", "total": 7, "hours": {"EVENTO SEM": 4, "ANILLO NORTE": 3}, "n_events": 2, "genero": "F", "edad": 54, "foto": "foto_8478.jpg", "foto_web": "images/socios/irene-rodriguez.jpg"}, {"nombre": "IRENE DÍAZ SANZ", "tipo": "M", "total": 56, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "RUTA LUCES": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "JUEGOS": 2, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 9, "genero": "F", "edad": 37, "foto": "foto_13175.jpg", "foto_web": "images/socios/irene-diaz-sanz.jpg"}, {"nombre": "ISABEL VEGA", "tipo": "V", "total": 5, "hours": {"RUTA SEM": 2, "ENSANCHE VALLECAS": 3}, "n_events": 2, "genero": "F", "edad": 45, "foto": "foto_10282.jpg", "foto_web": "images/socios/isabel-vega.jpg"}, {"nombre": "IVAN LOPEZ PEREZ", "tipo": "V", "total": 33, "hours": {"SANBLAS": 3, "RUTA LUCES": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 5, "genero": "M", "edad": 44, "foto": "foto_14588.jpg", "foto_web": "images/socios/ivan-lopez-perez.jpg"}, {"nombre": "JAVIER GRIÑAN LACACI", "tipo": "C", "total": 54, "hours": {"EVENTO SEM": 8, "SANBLAS": 3, "RUTA LUCES": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 11, "genero": "M", "edad": 49, "foto": "foto_1.jpg", "foto_web": "images/socios/javier-grinan-lacaci.jpg"}, {"nombre": "FRANCISCO JAVIER PEREZ ESCRIVA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 45, "foto": "foto_11239.jpg", "foto_web": "images/socios/francisco-javier-perez-escriva.jpg"}, {"nombre": "JESSICA ALVES STTRAPASSON", "tipo": "V", "total": 7, "hours": {"RUTA LUCES": 3, "DIA PATIN SANSE": 4}, "n_events": 2, "genero": "F", "edad": 35, "foto": "foto_14352.jpg", "foto_web": "images/socios/jessica-alves-sttrapasson.jpg"}, {"nombre": "JORGE PÉREZ SEN", "tipo": "M", "total": 33, "hours": {"COSTA BLANCA": 12, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "JUEGOS": 2, "RUTA VERANO": 3}, "n_events": 8, "genero": "M", "edad": 52, "foto": "foto_7462.jpg", "foto_web": "images/socios/jorge-perez-sen.jpg"}, {"nombre": "JUAN CARLOS GARCÍA RODRÍGUEZ", "tipo": "V", "total": 62, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 12, "genero": "M", "edad": 53, "foto": "foto_11839.jpg", "foto_web": "images/socios/juan-carlos-garcia-rodriguez.jpg"}, {"nombre": "JUAN JOSÉ MARTÍ", "tipo": "V", "total": 24.5, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5}, "n_events": 8, "genero": "M", "edad": 54, "foto": "foto_7825.jpg", "foto_web": "images/socios/juan-jose-marti.jpg"}, {"nombre": "JUAN CARLOS ZAZO CALAHORRA", "tipo": "M", "total": 22, "hours": {"RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "JUEGOS": 2}, "n_events": 7, "genero": "M", "edad": 51, "foto": "foto_10653.jpg", "foto_web": "images/socios/juan-carlos-zazo-calahorra.jpg"}, {"nombre": "ENRIQUE LÓPEZ CÁMARA", "tipo": "V", "total": 24, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "JUEGOS": 2, "CUESTAS": 2}, "n_events": 9, "genero": "M", "edad": 31, "foto": "foto_14258.jpg", "foto_web": "images/socios/enrique-lopez-camara.jpg"}, {"nombre": "LAURA IGLESIAS FEBRERO", "tipo": "V", "total": 30, "hours": {"RUTA LUCES": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 4, "genero": "F", "edad": 44, "foto": "foto_13697.jpg", "foto_web": "images/socios/laura-iglesias-febrero.jpg"}, {"nombre": "LUIS CACHO MONTES", "tipo": "V", "total": 60, "hours": {"RUTA SEM": 2, "EVENTO SEM": 2, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "DIA PATIN SANSE": 4, "CUESTAS": 2, "DANUBIO": 20}, "n_events": 12, "genero": "M", "edad": 45, "foto": "foto_6469.jpg", "foto_web": "images/socios/luis-cacho-montes.jpg"}, {"nombre": "MARIA JESÚS MIGUEL PÉREZ", "tipo": "V", "total": 8, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3}, "n_events": 3, "genero": "F", "edad": 61, "foto": "foto_6671.jpg", "foto_web": "images/socios/maria-jesus-miguel-perez.jpg"}, {"nombre": "MARIA JOSÉ SAAVEDRA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 49, "foto": "foto_6292.jpg", "foto_web": "images/socios/maria-jose-saavedra.jpg"}, {"nombre": "MARIANO MUÑOZ MORENO", "tipo": "V", "total": 28, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "DIA PATIN SANSE": 4}, "n_events": 6, "genero": "M", "edad": 54, "foto": "foto_12139.jpg", "foto_web": "images/socios/mariano-munoz-moreno.jpg"}, {"nombre": "MARTA DEL AGUILA", "tipo": "M", "total": 28, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "RUTA LUCES": 3, "CURSO VOLUNT.": 2, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 47, "foto": "foto_12662.jpg", "foto_web": "images/socios/marta-del-aguila.jpg"}, {"nombre": "MARTA BRAVO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 40, "foto": "foto_9502.jpg", "foto_web": "images/socios/marta-bravo.jpg"}, {"nombre": "MARTA GARCÍA GARCÍA", "tipo": "V", "total": 35, "hours": {"COSTA BLANCA": 12, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 3, "genero": "F", "edad": 47, "foto": "foto_9217.jpg", "foto_web": "images/socios/marta-garcia-garcia.jpg"}, {"nombre": "MARTA MARCHENA", "tipo": "M", "total": 62, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "DIA PATIN SANSE": 4, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 10, "genero": "F", "edad": 35, "foto": "foto_12650.jpg", "foto_web": "images/socios/marta-marchena.jpg"}, {"nombre": "EDUARDO MEJUTO MENDIETA", "tipo": "V", "total": 12, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "DIA DEPORTE SANSE": 1}, "n_events": 5, "genero": "M", "edad": 50, "foto": "foto_12341.jpg", "foto_web": "images/socios/eduardo-mejuto-mendieta.jpg"}, {"nombre": "MARÍA GÓMEZ", "tipo": "V", "total": 15, "hours": {"COSTA BLANCA": 12, "RUTA VERANO": 3}, "n_events": 2, "genero": "F", "edad": 45, "foto": "foto_6276.jpg", "foto_web": "images/socios/maria-gomez.jpg"}, {"nombre": "MIGUEL ALEGRE CORONADO", "tipo": "V", "total": 21.5, "hours": {"EVENTO SEM": 4, "ENSANCHE VALLECAS": 3, "HIELO": 4, "PRIMEROS AUXILIOS": 4.5, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 51, "foto": "foto_9987.jpg", "foto_web": "images/socios/miguel-alegre-coronado.jpg"}, {"nombre": "MILENI RODRÍGUEZ GÓMEZ", "tipo": "M", "total": 4.5, "hours": {"PRIMEROS AUXILIOS": 4.5}, "n_events": 1, "genero": "F", "edad": 36, "foto": "foto_14857.jpg", "foto_web": "images/socios/mileni-rodriguez-gomez.jpg"}, {"nombre": "MIMI FORNAGUERA CLARABUCH", "tipo": "V", "total": 25, "hours": {"CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 3, "genero": "F", "edad": 38, "foto": "foto_13356.jpg", "foto_web": "images/socios/mimi-fornaguera-clarabuch.jpg"}, {"nombre": "MONICA SANZ NIETO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 40, "foto": "foto_10058.jpg", "foto_web": "images/socios/monica-sanz-nieto.jpg"}, {"nombre": "NATALIA MORALEJO MARCO", "tipo": "V", "total": 6, "hours": {"SANBLAS": 3, "RUTA LUCES": 3}, "n_events": 2, "genero": "F", "edad": 51, "foto": "foto_10042.jpg", "foto_web": "images/socios/natalia-moralejo-marco.jpg"}, {"nombre": "PABLO GUZMÁN", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 50, "foto": "foto_9363.jpg", "foto_web": "images/socios/pablo-guzman.jpg"}, {"nombre": "PABLO DE LA IGLESIA", "tipo": "V", "total": 27, "hours": {"RUTA SEM": 2, "ANILLO SUR": 3, "CUESTAS": 2, "DANUBIO": 20}, "n_events": 4, "genero": "M", "edad": 45, "foto": "foto_13043.jpg", "foto_web": "images/socios/pablo-de-la-iglesia.jpg"}, {"nombre": "PALOMA GONZÁLEZ", "tipo": "M", "total": 15, "hours": {"EVENTO SEM": 4, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 54, "foto": "foto_10206.jpg", "foto_web": "images/socios/paloma-gonzalez.jpg"}, {"nombre": "PATRICIA MUÑOZ HERNÁNDEZ", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 34, "foto": "foto_12172.jpg", "foto_web": "images/socios/patricia-munoz-hernandez.jpg"}, {"nombre": "PATRICIA PALACIOS VENTAS", "tipo": "V", "total": 13, "hours": {"RUTA SEM": 2, "RUTA LUCES": 3, "HIELO": 4, "DIA PATIN SANSE": 4}, "n_events": 4, "genero": "F", "edad": 40, "foto": "foto_11769.jpg", "foto_web": "images/socios/patricia-palacios-ventas.jpg"}, {"nombre": "PATRICIA RAMOS GOMEZ", "tipo": "G", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 42, "foto": "foto_3467.jpg", "foto_web": "images/socios/patricia-ramos-gomez.jpg"}, {"nombre": "RAFAEL OROPEZA", "tipo": "V", "total": 28.5, "hours": {"EVENTO SEM": 8, "ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 36, "foto": "foto_15063.jpg", "foto_web": "images/socios/rafael-oropeza.jpg"}, {"nombre": "RAFAEL MORALEJO", "tipo": "V", "total": 6, "hours": {"SANBLAS": 3, "ANILLO NORTE": 3}, "n_events": 2, "genero": "M", "edad": 52, "foto": "foto_10354.jpg", "foto_web": "images/socios/rafael-moralejo.jpg"}, {"nombre": "RAQUEL SANZ MORENO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 48, "foto": "foto_13537.jpg", "foto_web": "images/socios/raquel-sanz-moreno.jpg"}, {"nombre": "ROBERTO OLMO BOLUDA", "tipo": "V", "total": 2, "hours": {"RUTA SEM": 2}, "n_events": 1, "genero": "M", "edad": 41, "foto": "foto_12264.jpg", "foto_web": "images/socios/roberto-olmo-boluda.jpg"}, {"nombre": "RODRIGO MARTÍN GARCÍA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 49, "foto": "foto_10470.jpg", "foto_web": "images/socios/rodrigo-martin-garcia.jpg"}, {"nombre": "RUBÉN ALEGRE VILA", "tipo": "V", "total": 47, "hours": {"RUTA SEM": 2, "COSTA BLANCA": 12, "RUTA LUCES": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 7, "genero": "M", "edad": 50, "foto": "foto_9331.jpg", "foto_web": "images/socios/ruben-alegre-vila.jpg"}, {"nombre": "SANDRA BRUECKNER", "tipo": "V", "total": 0, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 47, "foto": "foto_13800.jpg", "foto_web": "images/socios/sandra-brueckner.jpg"}, {"nombre": "SANTIAGO CAMACHO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": null}, {"nombre": "TAMAR CHAMIZO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 37, "foto": "foto_11702.jpg", "foto_web": "images/socios/tamar-chamizo.jpg"}, {"nombre": "VANESA RAMOS GOMEZ", "tipo": "G", "total": 8, "hours": {"EVENTO SEM": 8}, "n_events": 1, "genero": "F", "edad": 48, "foto": "foto_2.jpg", "foto_web": "images/socios/vanesa-ramos-gomez.jpg"}, {"nombre": "VERONICA PARDO MACHADO", "tipo": "M", "total": 20, "hours": {"DANUBIO": 20}, "n_events": 1, "genero": "F", "edad": 43, "foto": "foto_13408.jpg", "foto_web": "images/socios/veronica-pardo-machado.jpg"}, {"nombre": "VICTOR CAÑERO", "tipo": "V", "total": 42, "hours": {"COSTA BLANCA": 12, "RUTA LUCES": 3, "ANILLO SUR": 3, "DIA PATIN SANSE": 4, "DANUBIO": 20}, "n_events": 5, "genero": "M", "edad": 48, "foto": "foto_7027.jpg", "foto_web": "images/socios/victor-canero.jpg"}, {"nombre": "JORGE LOPEZ APARICIO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 41, "foto": "foto_13016.jpg", "foto_web": "images/socios/jorge-lopez-aparicio.jpg"}, {"nombre": "YOSUNE PÉREZ", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 46, "foto": "foto_10182.jpg", "foto_web": "images/socios/yosune-perez.jpg"}], "meta": {"avg_age": 44.8, "gender_m": 32, "gender_f": 37}};
+const DATA = {"events": [{"col": 21, "name": "RUTA SEM", "tipo": "RX", "date": "2025-09-21T00:00:00", "total_hours": 36, "participants": 18}, {"col": 22, "name": "EVENTO SEM", "tipo": "RX", "date": "2025-09-21T00:00:00", "total_hours": 100, "participants": 17, "foto": "images/eventos/evento-sem.jpg"}, {"col": 23, "name": "COSTA BLANCA", "tipo": "VN", "date": "2025-09-26T00:00:00", "total_hours": 180, "participants": 15, "foto": "images/eventos/costa-blanca.jpg"}, {"col": 24, "name": "SANBLAS", "tipo": "RX", "date": "2025-10-26T00:00:00", "total_hours": 54, "participants": 18, "foto": "images/eventos/sanblas.jpg"}, {"col": 25, "name": "RUTA LUCES", "tipo": "RX", "date": "2025-12-13T00:00:00", "total_hours": 57, "participants": 19, "foto": "images/eventos/ruta-luces.jpg"}, {"col": 26, "name": "ENSANCHE VALLECAS", "tipo": "RX", "date": "2026-01-25T00:00:00", "total_hours": 60, "participants": 20, "foto": "images/eventos/ensanche-vallecas.jpg"}, {"col": 27, "name": "HIELO", "tipo": "EV", "date": "2026-02-07T00:00:00", "total_hours": 60, "participants": 15, "foto": "images/eventos/hielo.jpg"}, {"col": 28, "name": "CURSO VOLUNT.", "tipo": "MC", "date": "2026-03-20T00:00:00", "total_hours": 22, "participants": 11}, {"col": 29, "name": "ANILLO SUR", "tipo": "RX", "date": "2026-03-22T00:00:00", "total_hours": 54, "participants": 18, "foto": "images/eventos/anillo-sur.jpg"}, {"col": 30, "name": "ANILLO NORTE", "tipo": "RX", "date": "2026-04-18T00:00:00", "total_hours": 45, "participants": 15, "foto": "images/eventos/anillo-norte.jpg"}, {"col": 31, "name": "PRIMEROS AUXILIOS", "tipo": "MC", "date": "2026-05-30T00:00:00", "total_hours": 40.5, "participants": 9}, {"col": 32, "name": "DIA PATIN SANSE", "tipo": "EV", "date": "2026-05-31T00:00:00", "total_hours": 64, "participants": 16, "foto": "images/eventos/dia-patin-sanse.jpg"}, {"col": 33, "name": "JUEGOS", "tipo": "MC", "date": "2026-06-05T00:00:00", "total_hours": 16, "participants": 8}, {"col": 34, "name": "CUESTAS", "tipo": "MC", "date": "2026-06-07T00:00:00", "total_hours": 24, "participants": 12}, {"col": 35, "name": "DIA DEPORTE SANSE", "tipo": "EV", "date": "2026-06-07T00:00:00", "total_hours": 5, "participants": 5}, {"col": 36, "name": "RUTA VERANO", "tipo": "RX", "date": "2026-06-13T00:00:00", "total_hours": 69, "participants": 23, "foto": "images/eventos/ruta-verano.jpg"}, {"col": 37, "name": "DANUBIO", "tipo": "VI", "date": "2026-06-24T00:00:00", "total_hours": 400, "participants": 20, "foto": "images/eventos/danubio.jpg"}], "volunteers": [{"nombre": "ALBERTO DE LA FUENTE", "tipo": "V", "total": 3, "hours": {"SANBLAS": 3}, "n_events": 1, "genero": "M", "edad": 48, "foto_web": "images/socios/alberto-de-la-fuente.jpg"}, {"nombre": "ALEJANDRA MARTÍNEZ FERNÁNDEZ", "tipo": "V", "total": 22.5, "hours": {"ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "RUTA VERANO": 3}, "n_events": 7, "genero": "F", "edad": 39, "foto": "foto_13774.jpg", "foto_web": "images/socios/alejandra-martinez-fernandez.jpg"}, {"nombre": "ANTÍA OUBIÑA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 42, "foto": "foto_12021.jpg", "foto_web": "images/socios/antia-oubina.jpg"}, {"nombre": "ARANTXA CLEMENTE MORCILLO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 35, "foto": "foto_13259.jpg", "foto_web": "images/socios/arantxa-clemente-morcillo.jpg"}, {"nombre": "BEATRIZ CAMAÑO", "tipo": "V", "total": 3, "hours": {"RUTA LUCES": 3}, "n_events": 1, "genero": "F", "edad": 29, "foto": "foto_12455.jpg", "foto_web": "images/socios/beatriz-camano.jpg"}, {"nombre": "BEATRIZ DELGADO", "tipo": "V", "total": 20, "hours": {"DANUBIO": 20}, "n_events": 1, "genero": "F", "edad": 48, "foto": "foto_9863.jpg", "foto_web": "images/socios/beatriz-delgado.jpg"}, {"nombre": "CARLOS GARCÍA ABELLA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 46, "foto": "foto_9318.jpg", "foto_web": "images/socios/carlos-garcia-abella.jpg"}, {"nombre": "CARLOS SANZ MORENO", "tipo": "V", "total": 32, "hours": {"COSTA BLANCA": 12, "DANUBIO": 20}, "n_events": 2, "genero": "M", "edad": 41, "foto": "foto_10994.jpg", "foto_web": "images/socios/carlos-sanz-moreno.jpg"}, {"nombre": "CHARO VIRTO MATÍAS", "tipo": "V", "total": 23, "hours": {"SANBLAS": 3, "DANUBIO": 20}, "n_events": 2, "genero": "F", "edad": 57, "foto": "foto_3259.jpg", "foto_web": "images/socios/charo-virto-matias.jpg"}, {"nombre": "DANIEL SERRANO", "tipo": "M", "total": 46.5, "hours": {"EVENTO SEM": 8, "ENSANCHE VALLECAS": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 8, "genero": "M", "edad": 40, "foto": "foto_12912.jpg", "foto_web": "images/socios/daniel-serrano.jpg"}, {"nombre": "DAVID GAMITO", "tipo": "V", "total": 14, "hours": {"EVENTO SEM": 8, "RUTA LUCES": 3, "ANILLO SUR": 3}, "n_events": 3, "genero": "M", "edad": 33, "foto": "foto_13989.jpg", "foto_web": "images/socios/david-gamito.jpg"}, {"nombre": "DAVID RIVAS COBOS", "tipo": "M", "total": 6, "hours": {"ANILLO SUR": 3, "RUTA VERANO": 3}, "n_events": 2, "genero": "M", "edad": 47, "foto": "foto_11845.jpg", "foto_web": "images/socios/david-rivas-cobos.jpg"}, {"nombre": "ELENA DE DIOS", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 41, "foto": "foto_9130.jpg", "foto_web": "images/socios/elena-de-dios.jpg"}, {"nombre": "MARÍA JOSÉ RODRÍGUEZ SANCHEZ BLANCA", "tipo": "V", "total": 43, "hours": {"RUTA SEM": 2, "COSTA BLANCA": 12, "ENSANCHE VALLECAS": 3, "ANILLO NORTE": 3, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 6, "genero": "F", "edad": 39, "foto": "foto_14926.jpg", "foto_web": "images/socios/maria-jose-rodriguez-sanchez-blanca.jpg"}, {"nombre": "ENRIQUE PARELLADA", "tipo": "V", "total": 5, "hours": {"RUTA SEM": 2, "SANBLAS": 3}, "n_events": 2, "genero": "M", "edad": 60, "foto": "foto_7873.jpg", "foto_web": "images/socios/enrique-parellada.jpg"}, {"nombre": "ESTHER BOCANEGRA", "tipo": "V", "total": 21, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO NORTE": 3, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3}, "n_events": 8, "genero": "F", "edad": 53, "foto": "foto_7036.jpg", "foto_web": "images/socios/esther-bocanegra.jpg"}, {"nombre": "FERNANDO DORADO", "tipo": "V", "total": 35, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "RUTA LUCES": 3, "HIELO": 4, "JUEGOS": 2, "DANUBIO": 20}, "n_events": 6, "genero": "M", "edad": 45, "foto": "foto_12974.jpg", "foto_web": "images/socios/fernando-dorado.jpg"}, {"nombre": "FRANCISCO AMADO FERRERA", "tipo": "V", "total": 22.5, "hours": {"ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 41, "foto": "foto_13775.jpg", "foto_web": "images/socios/francisco-amado-ferrera.jpg"}, {"nombre": "FRANCISCO PARIENTE", "tipo": "M", "total": 16, "hours": {"COSTA BLANCA": 12, "DIA PATIN SANSE": 4}, "n_events": 2, "genero": "M", "edad": 44, "foto": "foto_8987.jpg", "foto_web": "images/socios/francisco-pariente.jpg"}, {"nombre": "HELENA GASCON COLOMA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 32, "foto": "foto_13344.jpg", "foto_web": "images/socios/helena-gascon-coloma.jpg"}, {"nombre": "ICIAR MAULEÓN", "tipo": "M", "total": 62, "hours": {"RUTA SEM": 2, "EVENTO SEM": 6, "COSTA BLANCA": 12, "RUTA LUCES": 3, "HIELO": 4, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 12, "genero": "F", "edad": 50, "foto": "foto_7203.jpg", "foto_web": "images/socios/iciar-mauleon.jpg"}, {"nombre": "IRENE RODRÍGUEZ", "tipo": "M", "total": 7, "hours": {"EVENTO SEM": 4, "ANILLO NORTE": 3}, "n_events": 2, "genero": "F", "edad": 54, "foto": "foto_8478.jpg", "foto_web": "images/socios/irene-rodriguez.jpg"}, {"nombre": "IRENE DÍAZ SANZ", "tipo": "M", "total": 56, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "RUTA LUCES": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "JUEGOS": 2, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 9, "genero": "F", "edad": 37, "foto": "foto_13175.jpg", "foto_web": "images/socios/irene-diaz-sanz.jpg"}, {"nombre": "ISABEL VEGA", "tipo": "V", "total": 5, "hours": {"RUTA SEM": 2, "ENSANCHE VALLECAS": 3}, "n_events": 2, "genero": "F", "edad": 45, "foto": "foto_10282.jpg", "foto_web": "images/socios/isabel-vega.jpg"}, {"nombre": "IVAN LOPEZ PEREZ", "tipo": "V", "total": 33, "hours": {"SANBLAS": 3, "RUTA LUCES": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 5, "genero": "M", "edad": 44, "foto": "foto_14588.jpg", "foto_web": "images/socios/ivan-lopez-perez.jpg"}, {"nombre": "JAVIER GRIÑAN LACACI", "tipo": "C", "total": 54, "hours": {"EVENTO SEM": 8, "SANBLAS": 3, "RUTA LUCES": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 11, "genero": "M", "edad": 49, "foto": "foto_1.jpg", "foto_web": "images/socios/javier-grinan-lacaci.jpg"}, {"nombre": "FRANCISCO JAVIER PEREZ ESCRIVA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 45, "foto": "foto_11239.jpg", "foto_web": "images/socios/francisco-javier-perez-escriva.jpg"}, {"nombre": "JESSICA ALVES STTRAPASSON", "tipo": "V", "total": 7, "hours": {"RUTA LUCES": 3, "DIA PATIN SANSE": 4}, "n_events": 2, "genero": "F", "edad": 35, "foto": "foto_14352.jpg", "foto_web": "images/socios/jessica-alves-sttrapasson.jpg"}, {"nombre": "JORGE PÉREZ SEN", "tipo": "M", "total": 33, "hours": {"COSTA BLANCA": 12, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "JUEGOS": 2, "RUTA VERANO": 3}, "n_events": 8, "genero": "M", "edad": 52, "foto": "foto_7462.jpg", "foto_web": "images/socios/jorge-perez-sen.jpg"}, {"nombre": "JUAN CARLOS GARCÍA RODRÍGUEZ", "tipo": "V", "total": 62, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 12, "genero": "M", "edad": 53, "foto": "foto_11839.jpg", "foto_web": "images/socios/juan-carlos-garcia-rodriguez.jpg"}, {"nombre": "JUAN JOSÉ MARTÍ", "tipo": "V", "total": 24.5, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5}, "n_events": 8, "genero": "M", "edad": 54, "foto": "foto_7825.jpg", "foto_web": "images/socios/juan-jose-marti.jpg"}, {"nombre": "JUAN CARLOS ZAZO CALAHORRA", "tipo": "M", "total": 22, "hours": {"RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "JUEGOS": 2}, "n_events": 7, "genero": "M", "edad": 51, "foto": "foto_10653.jpg", "foto_web": "images/socios/juan-carlos-zazo-calahorra.jpg"}, {"nombre": "ENRIQUE LÓPEZ CÁMARA", "tipo": "V", "total": 24, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "JUEGOS": 2, "CUESTAS": 2}, "n_events": 9, "genero": "M", "edad": 31, "foto": "foto_14258.jpg", "foto_web": "images/socios/enrique-lopez-camara.jpg"}, {"nombre": "LAURA IGLESIAS FEBRERO", "tipo": "V", "total": 30, "hours": {"RUTA LUCES": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 4, "genero": "F", "edad": 44, "foto": "foto_13697.jpg", "foto_web": "images/socios/laura-iglesias-febrero.jpg"}, {"nombre": "LUIS CACHO MONTES", "tipo": "V", "total": 60, "hours": {"RUTA SEM": 2, "EVENTO SEM": 2, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "DIA PATIN SANSE": 4, "CUESTAS": 2, "DANUBIO": 20}, "n_events": 12, "genero": "M", "edad": 45, "foto": "foto_6469.jpg", "foto_web": "images/socios/luis-cacho-montes.jpg"}, {"nombre": "MARIA JESÚS MIGUEL PÉREZ", "tipo": "V", "total": 8, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3}, "n_events": 3, "genero": "F", "edad": 61, "foto": "foto_6671.jpg", "foto_web": "images/socios/maria-jesus-miguel-perez.jpg"}, {"nombre": "MARIA JOSÉ SAAVEDRA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 49, "foto": "foto_6292.jpg", "foto_web": "images/socios/maria-jose-saavedra.jpg"}, {"nombre": "MARIANO MUÑOZ MORENO", "tipo": "V", "total": 28, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "DIA PATIN SANSE": 4}, "n_events": 6, "genero": "M", "edad": 54, "foto": "foto_12139.jpg", "foto_web": "images/socios/mariano-munoz-moreno.jpg"}, {"nombre": "MARTA DEL AGUILA", "tipo": "M", "total": 28, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "RUTA LUCES": 3, "CURSO VOLUNT.": 2, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 47, "foto": "foto_12662.jpg", "foto_web": "images/socios/marta-del-aguila.jpg"}, {"nombre": "MARTA BRAVO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 40, "foto": "foto_9502.jpg", "foto_web": "images/socios/marta-bravo.jpg"}, {"nombre": "MARTA GARCÍA GARCÍA", "tipo": "V", "total": 35, "hours": {"COSTA BLANCA": 12, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 3, "genero": "F", "edad": 47, "foto": "foto_9217.jpg", "foto_web": "images/socios/marta-garcia-garcia.jpg"}, {"nombre": "MARTA MARCHENA", "tipo": "M", "total": 62, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "DIA PATIN SANSE": 4, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 10, "genero": "F", "edad": 35, "foto": "foto_12650.jpg", "foto_web": "images/socios/marta-marchena.jpg"}, {"nombre": "EDUARDO MEJUTO MENDIETA", "tipo": "V", "total": 12, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "DIA DEPORTE SANSE": 1}, "n_events": 5, "genero": "M", "edad": 50, "foto": "foto_12341.jpg", "foto_web": "images/socios/eduardo-mejuto-mendieta.jpg"}, {"nombre": "MARÍA GÓMEZ", "tipo": "V", "total": 15, "hours": {"COSTA BLANCA": 12, "RUTA VERANO": 3}, "n_events": 2, "genero": "F", "edad": 45, "foto": "foto_6276.jpg", "foto_web": "images/socios/maria-gomez.jpg"}, {"nombre": "MIGUEL ALEGRE CORONADO", "tipo": "V", "total": 21.5, "hours": {"EVENTO SEM": 4, "ENSANCHE VALLECAS": 3, "HIELO": 4, "PRIMEROS AUXILIOS": 4.5, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 51, "foto": "foto_9987.jpg", "foto_web": "images/socios/miguel-alegre-coronado.jpg"}, {"nombre": "MILENI RODRÍGUEZ GÓMEZ", "tipo": "M", "total": 4.5, "hours": {"PRIMEROS AUXILIOS": 4.5}, "n_events": 1, "genero": "F", "edad": 36, "foto": "foto_14857.jpg", "foto_web": "images/socios/mileni-rodriguez-gomez.jpg"}, {"nombre": "MIMI FORNAGUERA CLARABUCH", "tipo": "V", "total": 25, "hours": {"CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 3, "genero": "F", "edad": 38, "foto": "foto_13356.jpg", "foto_web": "images/socios/mimi-fornaguera-clarabuch.jpg"}, {"nombre": "MONICA SANZ NIETO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 40, "foto": "foto_10058.jpg", "foto_web": "images/socios/monica-sanz-nieto.jpg"}, {"nombre": "NATALIA MORALEJO MARCO", "tipo": "V", "total": 6, "hours": {"SANBLAS": 3, "RUTA LUCES": 3}, "n_events": 2, "genero": "F", "edad": 51, "foto": "foto_10042.jpg", "foto_web": "images/socios/natalia-moralejo-marco.jpg"}, {"nombre": "PABLO GUZMÁN", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 50, "foto": "foto_9363.jpg", "foto_web": "images/socios/pablo-guzman.jpg"}, {"nombre": "PABLO DE LA IGLESIA", "tipo": "V", "total": 27, "hours": {"RUTA SEM": 2, "ANILLO SUR": 3, "CUESTAS": 2, "DANUBIO": 20}, "n_events": 4, "genero": "M", "edad": 45, "foto": "foto_13043.jpg", "foto_web": "images/socios/pablo-de-la-iglesia.jpg"}, {"nombre": "PALOMA GONZÁLEZ", "tipo": "M", "total": 15, "hours": {"EVENTO SEM": 4, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 54, "foto": "foto_10206.jpg", "foto_web": "images/socios/paloma-gonzalez.jpg"}, {"nombre": "PATRICIA MUÑOZ HERNÁNDEZ", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 34, "foto": "foto_12172.jpg", "foto_web": "images/socios/patricia-munoz-hernandez.jpg"}, {"nombre": "PATRICIA PALACIOS VENTAS", "tipo": "V", "total": 13, "hours": {"RUTA SEM": 2, "RUTA LUCES": 3, "HIELO": 4, "DIA PATIN SANSE": 4}, "n_events": 4, "genero": "F", "edad": 40, "foto": "foto_11769.jpg", "foto_web": "images/socios/patricia-palacios-ventas.jpg"}, {"nombre": "PATRICIA RAMOS GOMEZ", "tipo": "G", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 42, "foto": "foto_3467.jpg", "foto_web": "images/socios/patricia-ramos-gomez.jpg"}, {"nombre": "RAFAEL OROPEZA", "tipo": "V", "total": 28.5, "hours": {"EVENTO SEM": 8, "ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 36, "foto": "foto_15063.jpg", "foto_web": "images/socios/rafael-oropeza.jpg"}, {"nombre": "RAFAEL MORALEJO", "tipo": "V", "total": 6, "hours": {"SANBLAS": 3, "ANILLO NORTE": 3}, "n_events": 2, "genero": "M", "edad": 52, "foto": "foto_10354.jpg", "foto_web": "images/socios/rafael-moralejo.jpg"}, {"nombre": "RAQUEL SANZ MORENO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 48, "foto": "foto_13537.jpg", "foto_web": "images/socios/raquel-sanz-moreno.jpg"}, {"nombre": "ROBERTO OLMO BOLUDA", "tipo": "V", "total": 2, "hours": {"RUTA SEM": 2}, "n_events": 1, "genero": "M", "edad": 41, "foto": "foto_12264.jpg", "foto_web": "images/socios/roberto-olmo-boluda.jpg"}, {"nombre": "RODRIGO MARTÍN GARCÍA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 49, "foto": "foto_10470.jpg", "foto_web": "images/socios/rodrigo-martin-garcia.jpg"}, {"nombre": "RUBÉN ALEGRE VILA", "tipo": "V", "total": 47, "hours": {"RUTA SEM": 2, "COSTA BLANCA": 12, "RUTA LUCES": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 7, "genero": "M", "edad": 50, "foto": "foto_9331.jpg", "foto_web": "images/socios/ruben-alegre-vila.jpg"}, {"nombre": "SANDRA BRUECKNER", "tipo": "V", "total": 0, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 47, "foto": "foto_13800.jpg", "foto_web": "images/socios/sandra-brueckner.jpg"}, {"nombre": "SANTIAGO CAMACHO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": null}, {"nombre": "TAMAR CHAMIZO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 37, "foto": "foto_11702.jpg", "foto_web": "images/socios/tamar-chamizo.jpg"}, {"nombre": "VANESA RAMOS GOMEZ", "tipo": "G", "total": 8, "hours": {"EVENTO SEM": 8}, "n_events": 1, "genero": "F", "edad": 48, "foto": "foto_2.jpg", "foto_web": "images/socios/vanesa-ramos-gomez.jpg"}, {"nombre": "VERONICA PARDO MACHADO", "tipo": "M", "total": 20, "hours": {"DANUBIO": 20}, "n_events": 1, "genero": "F", "edad": 43, "foto": "foto_13408.jpg", "foto_web": "images/socios/veronica-pardo-machado.jpg"}, {"nombre": "VICTOR CAÑERO", "tipo": "V", "total": 42, "hours": {"COSTA BLANCA": 12, "RUTA LUCES": 3, "ANILLO SUR": 3, "DIA PATIN SANSE": 4, "DANUBIO": 20}, "n_events": 5, "genero": "M", "edad": 48, "foto": "foto_7027.jpg", "foto_web": "images/socios/victor-canero.jpg"}, {"nombre": "JORGE LOPEZ APARICIO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 41, "foto": "foto_13016.jpg", "foto_web": "images/socios/jorge-lopez-aparicio.jpg"}, {"nombre": "YOSUNE PÉREZ", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 46, "foto": "foto_10182.jpg", "foto_web": "images/socios/yosune-perez.jpg"}, {"nombre": "JAIME", "tipo": "M", "total": 17.5, "hours": {"CURSO VOLUNT.": 2, "ANILLO SUR": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2}, "n_events": 6, "genero": null, "edad": null, "foto_web": "images/socios/jaime.jpg"}, {"nombre": "PAÑI", "tipo": "V", "total": 10.5, "hours": {"ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "PRIMEROS AUXILIOS": 4.5}, "n_events": 3, "genero": null, "edad": null, "foto_web": "images/socios/pani.jpg"}], "meta": {"avg_age": 44.8, "gender_m": 32, "gender_f": 37}, "feedback_danubio": {"n_respuestas": 35, "n_comentarios": 30, "scores": {"RUTAS": 8.27, "HOTEL": 9.15, "AUTOBUS": 9.09, "DESAYUNOS": 8.44, "EQUIPO VOLUNTARIOS": 9.59, "COORDINADORES": 9.53}, "top_destinos": [["Islandia", 5], ["Noruega", 3], ["Croacia", 3], ["Holanda", 3], ["Lituania", 3], ["Suecia", 2], ["Finlandia", 2], ["Escandinavia", 2]], "duracion": {"5 días": 21, "Otro": 7, "Depende": 3, "4 días": 2}, "quotes": ["Ante una alerta roja, hay q ser prudente no se puede patinar a toda costa, menos mal q no ha pasado nada mas", "Muy bien, las rutas muy largas para el calor que ha hecho, se deberían hacer a primerísima hora de la mańana y evitar las horas de más calor, quizás tres grupos de rutas…", "Inolvidable, no hacer más de 4h de viaje por día, si hay que dessplazarse a algo que esté a más de dos horas, mejor cambiar de alojamiento, dos dias y dos días creo que…", "Muy bien! Solo un par de cositas: la cena del viaje organizada mejor el último día! No se ha sentido como una celebración de \"despedida\" de viaje (Y el menú bastante…", "Me gustan los viajes internacionales de MP, y agradezco el esfuerzo y tiempo dedicados en la organización, soy consistente de la dificultad, esfuerzo, y tiempo…", "En general me ha encantado el viaje y las rutas, pero en particular la de Sap por el calor no pude disfrutarla, me pareció un infierno a pesar de que el suelo era…", "La puntuación de las rutas tiene que ver con la mala suerte del calor que ha hecho y porque la de Sap no me gustó mucho. La puntuación de los coordinadores tiene que ver…", "¡Hola, equipo! Esta ha sido mi primera experiencia y la verdad es que solo tengo cosas positivas que decir. Voy por partes para no dejarme nada: *1. Lo más importante:…", "Un viaje alucinante. Creo que para próximos viajes es muy importante, para evitar problemas de seguridad, evitar destinos donde puedan darse olas de calor. Norte de…", "* Primero que nada quiero agradecer y dar valor a toda la organización del viaje, se que siempre es un trabajazo pero además está vez soy consciente de que habéis…", "El viaje en general estuvo genial! La rutas y la organización en general estuvieron muy bien! El itinerario estuvo muy ajustado pero aún así hubo tiempo para disfrutar…", "Muy bien! impresionado con la organización, muy buen trabajo, enhorabuena", "Aunque \"sudado\", muy contento. Ideas: - Javi e Ichi quizá deberíais usar micro de petaca para no acabar afónicos y mejorar la escucha - hay que recordar por enésima vez,…", "Más que el destino, lo mejor de los viajes con MP son las personas. Como visión general y por poner algo de opinión diría que podríamos hacer 2 grupos, el grupo que…", "En general bien, aunque algo agridulce. Esperaba un viaje más de turisteo por el centro de las ciudades; me sobraron las rutas de Bratislava y Eslovaquia. Para eso no…", "Como siempre excelente organización, aunque esta vez con un par de \"peros\" y que creo que ya sois conscientes: el primero, ese cambio de hora a las 2 y pico de la…", "Todo super bien, lastima que nos haya cogido el calor bastante mal, pero lo he disfrutado", "9,5", "Genial !! Buenas organización, buen ambiente.", "Fue mi primer viaje y me ha encantado. Creo que está bien equilibrado tener un tiempo de rutas y tiempo libre o de descanso. Para el desayuno si me parecía que había…", "Brindáis máxima seguridad con la organización y el respaldo de los voluntarios", "Todo fenomenal, como siempre. Una pena que hiciera tanto calor para las rutas y alargar la cena de grupo en el restaurante", "Un viaje muy bien preparado y complejo por los días que duró. Se adaptaron rutas sobre la marcha debido al tiempo, lo cual se agradece y sé que es difícil de realizar,…", "Este ha sido mi 4° viaje con vosotros (3° internacional). Hemos tenido mala suerte con el calor y por eso yo personalmente no he podido disfrutar del patinaje como me…", "Se me olvidó una cosa...camisetas negras bajo el sol...mal jajajaja Muy chulas, sí, pero son la muerte en vida!", "Por mi parte ha sido un viaje fantástico. He ido a todas las rutas y se han disfrutado mucho, especialmente la segunda, la que conectaba Viena y Bratislava. Las rutas…", "Estuvo increíble!!! Gracias por tanta atención al detalle!!!", "Alucinante. Un ambiente genial. Me ha encantado.Me ha sorprendido mucho el nivel de organización, tanto antes del viaje (la pagina web, organizar las camisetas, lo de…", "Muy buena valoración del viaje en general por mi parte, con especial mención al trabajo de los voluntarios y coordinadores con las palizas que se han dado bajo esas…", "Todo muy divertido como siempre. Gracias!"]}};
 
 const YELLOW = '#e8ff00';
 const YELLOW_DIM = 'rgba(232,255,0,0.35)';
@@ -604,7 +653,6 @@ const barObserver = new IntersectionObserver((entries)=>{
 function initials(name){
   return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 }
-const MEDALS = ['🥇','🥈','🥉'];
 
 function renderLeaderboard(){
   let list = vols.filter(v=>v.nombre.toLowerCase().includes(currentQuery));
@@ -620,9 +668,11 @@ function renderLeaderboard(){
     const avatarHtml = v.foto_web
       ? `<img class="lb-avatar" src="${v.foto_web}" alt="${v.nombre}">`
       : `<div class="lb-avatar-fallback">${initials(v.nombre)}</div>`;
-    const medal = i<3 ? `<span class="medal">${MEDALS[i]}</span>` : '';
+    const rankHtml = i<3
+      ? `<div class="lb-rank is-medal">${i+1}</div>`
+      : `<div class="lb-rank">${String(i+1).padStart(2,'0')}</div>`;
     row.innerHTML = `
-      <div class="lb-rank">${String(i+1).padStart(2,'0')}${medal}</div>
+      ${rankHtml}
       ${avatarHtml}
       <div class="lb-name">${v.nombre}</div>
       <div class="lb-events">${v.n_events} evento${v.n_events===1?'':'s'}</div>
@@ -796,28 +846,6 @@ sortedEvents.forEach(ev=>{
   eventsGrid.appendChild(card);
 });
 
-// ---------- GALLERY: ASÍ FUE LA TEMPORADA ----------
-const galleryScroll = document.getElementById('galleryScroll');
-const eventsWithPhoto = sortedEvents.filter(e=>e.foto);
-if(eventsWithPhoto.length === 0){
-  galleryScroll.innerHTML = '<p style="color:var(--gray);font-size:13px;">Aún no hay fotos de eventos cargadas.</p>';
-} else {
-  eventsWithPhoto.forEach(ev=>{
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    const dateStr = new Date(ev.date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
-    item.innerHTML = `
-      <img src="${ev.foto}" alt="${ev.name}">
-      <div class="gallery-caption">
-        <div class="g-name">${ev.name}</div>
-        <div class="g-date">${dateStr}</div>
-      </div>
-    `;
-    item.addEventListener('click', ()=> openLightbox(ev.foto));
-    galleryScroll.appendChild(item);
-  });
-}
-
 // ---------- PARTICIPANTS PER EVENT ----------
 function buildChartParticipants(){
 new Chart(document.getElementById('chartParticipants'), {
@@ -897,6 +925,120 @@ new Chart(document.getElementById('chartTimeline'), {
 });
 }
 
+// ---------- MAPS ----------
+// Añade aquí un objeto por cada ruta/evento con su enlace de Google My Maps (mid).
+const MAPS = [
+  { event: 'Ruta SEM (2025)', mid: '1nvRnd8EStSG1Tp3SHpnRdq6cgc5mq8c' },
+];
+const mapsGrid = document.getElementById('mapsGrid');
+const mapPlaceholder = document.getElementById('mapPlaceholder');
+if(MAPS.length === 0){
+  mapPlaceholder.style.display = 'block';
+} else {
+  MAPS.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'map-card';
+    card.innerHTML = `
+      <div class="map-card-title">${m.event}</div>
+      <iframe src="https://www.google.com/maps/d/embed?mid=${m.mid}" loading="lazy"></iframe>
+    `;
+    mapsGrid.appendChild(card);
+  });
+}
+
+// ---------- FEEDBACK DANUBIO ----------
+const FB = DATA.feedback_danubio;
+if(FB){
+  document.getElementById('fbResponseCount').textContent =
+    `Basado en ${FB.n_respuestas} respuestas del formulario de valoración (${FB.n_comentarios} con comentarios abiertos).`;
+
+  const metaStrip = document.getElementById('fbMetaStrip');
+  const avgAll = Object.values(FB.scores).reduce((a,b)=>a+b,0)/Object.values(FB.scores).length;
+  metaStrip.innerHTML = `
+    <div class="fb-meta-item"><b>${FB.n_respuestas}</b><span>Respuestas</span></div>
+    <div class="fb-meta-item"><b>${avgAll.toFixed(1)}</b><span>Valoración media global</span></div>
+    <div class="fb-meta-item"><b>${FB.n_comentarios}</b><span>Comentarios recibidos</span></div>
+  `;
+
+  const quotesEl = document.getElementById('fbQuotes');
+  FB.quotes.forEach(q=>{
+    const el = document.createElement('div');
+    el.className = 'fb-quote';
+    el.textContent = `"${q}"`;
+    quotesEl.appendChild(el);
+  });
+}
+
+function buildChartFbScores(){
+  if(!FB) return;
+  const labels = Object.keys(FB.scores).map(k=>k.charAt(0)+k.slice(1).toLowerCase());
+  new Chart(document.getElementById('chartFbScores'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        data: Object.values(FB.scores),
+        backgroundColor: YELLOW,
+        borderRadius:6,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:1100, easing:'easeOutCubic'},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>c.parsed.y+' / 10'}}},
+      scales:{
+        y:{min:0,max:10, grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:GRAY}},
+        x:{grid:{display:false}, ticks:{color:'#ddd'}}
+      }
+    }
+  });
+}
+
+function buildChartFbLength(){
+  if(!FB) return;
+  new Chart(document.getElementById('chartFbLength'), {
+    type:'doughnut',
+    data:{
+      labels: Object.keys(FB.duracion),
+      datasets:[{
+        data: Object.values(FB.duracion),
+        backgroundColor: ['#e8ff00','#8a8a8a','#3a3a3a','#cfe600'],
+        borderColor:'#141414', borderWidth:4,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:1100, easing:'easeOutCubic'},
+      plugins:{legend:{position:'bottom', labels:{color:'#ccc', boxWidth:12, padding:14}}}
+    }
+  });
+}
+
+function buildChartFbDestinos(){
+  if(!FB) return;
+  new Chart(document.getElementById('chartFbDestinos'), {
+    type:'bar',
+    data:{
+      labels: FB.top_destinos.map(d=>d[0]),
+      datasets:[{
+        data: FB.top_destinos.map(d=>d[1]),
+        backgroundColor: YELLOW,
+        borderRadius:6,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:1100, easing:'easeOutCubic'},
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:GRAY, stepSize:1}},
+        y:{grid:{display:false}, ticks:{color:'#ddd'}}
+      }
+    }
+  });
+}
+
 // ---------- LAZY CHART INIT ON SCROLL ----------
 const chartBuilders = {
   chartTop: buildChartTop,
@@ -905,6 +1047,9 @@ const chartBuilders = {
   chartParticipants: buildChartParticipants,
   chartType: buildChartType,
   chartTimeline: buildChartTimeline,
+  chartFbScores: buildChartFbScores,
+  chartFbLength: buildChartFbLength,
+  chartFbDestinos: buildChartFbDestinos,
 };
 const chartObserver = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
