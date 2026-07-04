@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADRIDPATINA — Voluntariado 25/26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --black:#0a0a0a;
+    --black2:#141414;
+    --yellow:#e8ff00;
+    --yellow-dim:#b8cc00;
+    --gray:#8a8a8a;
+    --line: rgba(232,255,0,0.14);
+    --pink:#ff2e9c;
+    --blue:#2ec8ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:#f2f2f2;
+    font-family:'Space Mono', monospace;
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(232,255,0,0.06), transparent 40%),
+      radial-gradient(circle at 85% 60%, rgba(232,255,0,0.05), transparent 45%);
+  }
+  h1,h2,h3,.display{font-family:'Unbounded', sans-serif;}
+  ::selection{background:var(--yellow);color:#000;}
+
+  /* noise overlay */
+  .noise{
+    position:fixed;inset:0;pointer-events:none;z-index:999;opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* logo watermarks in background */
+  .logo-watermark{
+    position:absolute;pointer-events:none;z-index:0;opacity:0.55;
+  }
+  .logo-watermark svg{width:100%;height:100%;display:block;}
+  .wm-hero{top:-120px;right:-180px;width:620px;height:620px;transform:rotate(12deg);opacity:0.9;}
+  .wm-ranking{top:-60px;left:-160px;width:420px;height:420px;transform:rotate(-18deg);}
+  .wm-events{bottom:-140px;right:-140px;width:480px;height:480px;transform:rotate(8deg);}
+  .wm-demo{top:-100px;right:-120px;width:380px;height:380px;transform:rotate(-10deg);}
+  section{position:relative;overflow:hidden;}
+  header.hero{position:relative;overflow:hidden;}
+
+  .nav-logo-mark{width:30px;height:30px;display:inline-flex;vertical-align:-8px;margin-right:8px;}
+  .nav-logo-mark svg{width:100%;height:100%;}
+
+  .container{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(10,10,10,0.85);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .container{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .logo{font-family:'Unbounded';font-weight:800;font-size:18px;letter-spacing:-0.02em;}
+  .logo span{color:var(--yellow);}
+  nav .links{display:flex;gap:28px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;}
+  nav .links a{color:var(--gray);text-decoration:none;transition:color .2s;}
+  nav .links a:hover{color:var(--yellow);}
+
+  /* HERO */
+  .hero{padding:100px 0 60px;position:relative;}
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--yellow);color:var(--yellow);
+    font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+    padding:6px 14px;border-radius:999px;margin-bottom:28px;
+  }
+  .hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 12px 3px var(--yellow);}
+  h1.title{
+    font-size:clamp(48px, 9vw, 128px);
+    font-weight:900;
+    line-height:0.88;
+    letter-spacing:-0.03em;
+    text-transform:uppercase;
+  }
+  h1.title .line2{color:var(--yellow);
+    -webkit-text-stroke:0px;
+  }
+  .hero-sub{
+    margin-top:28px;max-width:620px;color:var(--gray);
+    font-size:15px;line-height:1.7;
+  }
+  .hero-sub b{color:#fff;}
+
+  /* STAT STRIP */
+  .stats-strip{
+    display:grid;grid-template-columns:repeat(5,1fr);
+    border:1px solid var(--line);border-radius:18px;
+    margin-top:64px;overflow:hidden;
+  }
+  .stat-cell{
+    padding:32px 24px;border-right:1px solid var(--line);
+    position:relative;transition:background .25s;
+  }
+  .stat-cell:last-child{border-right:none;}
+  .stat-cell:hover{background:rgba(232,255,0,0.04);}
+  .stat-num{
+    font-family:'Unbounded';font-weight:800;
+    font-size:clamp(30px,4vw,52px);color:var(--yellow);line-height:1;
+  }
+  .stat-label{
+    margin-top:10px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);
+  }
+
+  section{padding:90px 0;border-top:1px solid var(--line);}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:48px;}
+  .kicker{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;font-weight:700;}
+  h2.section-title{font-size:clamp(30px,4.5vw,56px);font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;line-height:1;}
+  .section-desc{max-width:440px;color:var(--gray);font-size:13px;line-height:1.7;}
+
+  /* CHARTS GRID */
+  .charts-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;}
+  .card{
+    background:var(--black2);border:1px solid var(--line);border-radius:18px;padding:28px;
+  }
+  .card h3{font-size:13px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray);margin-bottom:20px;font-weight:600;}
+  .chart-wrap{position:relative;height:340px;}
+  .chart-wrap.tall{height:520px;}
+
+  /* LEADERBOARD */
+  .leaderboard{display:grid;gap:2px;}
+  .lb-row{
+    display:grid;grid-template-columns:44px 1fr auto auto;gap:16px;align-items:center;
+    padding:14px 18px;background:var(--black2);border:1px solid transparent;border-radius:10px;
+    transition:transform .15s, border-color .15s;
+  }
+  .lb-row:hover{border-color:var(--yellow);transform:translateX(4px);}
+  .lb-rank{font-family:'Unbounded';font-weight:800;color:var(--gray);font-size:18px;}
+  .lb-row.top1 .lb-rank,.lb-row.top2 .lb-rank,.lb-row.top3 .lb-rank{color:var(--yellow);}
+  .lb-name{font-size:14px;font-weight:700;color:#fff;font-family:'Unbounded';text-transform:uppercase;letter-spacing:0.01em;}
+  .lb-events{font-size:11px;color:var(--gray);white-space:nowrap;}
+  .lb-hours{font-family:'Unbounded';font-weight:800;color:var(--yellow);font-size:18px;white-space:nowrap;}
+  .lb-bar-bg{grid-column:1/-1;height:4px;background:#000;border-radius:4px;overflow:hidden;margin-top:2px;}
+  .lb-bar-fill{
+    height:100%;width:0%;background:linear-gradient(90deg,var(--yellow-dim),var(--yellow));
+    transition:width 1.1s cubic-bezier(.16,.85,.4,1);
+  }
+
+  /* search */
+  .controls-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:24px;}
+  .search-box{
+    flex:1;min-width:240px;
+    display:flex;align-items:center;gap:10px;background:var(--black2);
+    border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:0;
+  }
+  .search-box input{
+    background:transparent;border:none;outline:none;color:#fff;font-family:'Space Mono';font-size:14px;width:100%;
+  }
+  .search-box input::placeholder{color:var(--gray);}
+  .search-box svg{flex-shrink:0;}
+
+  .sort-toggle{
+    display:flex;align-items:center;gap:8px;background:var(--black2);
+    border:1px solid var(--line);border-radius:12px;padding:8px;
+  }
+  .sort-label{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);padding-left:8px;padding-right:2px;}
+  .sort-btn{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;
+    background:transparent;border:none;color:var(--gray);padding:8px 16px;border-radius:8px;cursor:pointer;
+    transition:background .2s, color .2s;font-weight:700;
+  }
+  .sort-btn:hover{color:#fff;}
+  .sort-btn.active{background:var(--yellow);color:#000;}
+
+  /* EVENTS */
+  .events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+  .event-card{
+    background:var(--black2);border:1px solid var(--line);border-radius:16px;padding:24px;
+    position:relative;overflow:hidden;transition:border-color .2s, transform .2s;
+  }
+  .event-card:hover{border-color:var(--yellow);transform:translateY(-4px);}
+  .event-card .badge{
+    position:absolute;top:18px;right:18px;font-size:9px;letter-spacing:0.1em;
+    padding:4px 9px;border-radius:999px;text-transform:uppercase;font-weight:700;
+    border:1px solid var(--gray);color:var(--gray);
+  }
+  .event-card.mc .badge{border-color:var(--yellow);color:var(--yellow);background:rgba(232,255,0,0.08);}
+  .event-card .ev-date{font-size:10px;color:var(--gray);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;}
+  .event-card h4{font-family:'Unbounded';font-size:19px;text-transform:uppercase;margin-bottom:18px;line-height:1.15;padding-right:60px;}
+  .event-card .ev-stats{display:flex;gap:24px;}
+  .ev-stat b{display:block;font-family:'Unbounded';font-size:24px;color:var(--yellow);font-weight:800;}
+  .ev-stat span{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;}
+  .ev-stat.highlight b{
+    display:inline-block;color:#000;background:var(--yellow);
+    padding:2px 10px;border-radius:6px;
+  }
+
+  /* DEMOGRAPHICS */
+  .demo-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;}
+  .demo-card{display:flex;flex-direction:column;}
+  .demo-legend{display:flex;gap:28px;margin-top:8px;justify-content:center;}
+  .demo-legend-item{font-size:13px;color:var(--gray);display:flex;align-items:center;gap:8px;}
+  .demo-legend-item b{color:#fff;font-family:'Unbounded';font-size:16px;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .demo-age{align-items:center;justify-content:center;text-align:center;}
+  .age-display{display:flex;align-items:baseline;gap:10px;margin:20px 0 14px;}
+  .age-number{font-family:'Unbounded';font-weight:900;font-size:clamp(70px,9vw,130px);color:var(--yellow);line-height:1;}
+  .age-suffix{font-size:16px;text-transform:uppercase;letter-spacing:0.1em;color:var(--gray);}
+  .age-note{font-size:12px;color:var(--gray);max-width:280px;line-height:1.6;}
+
+  @media (max-width:860px){
+    .demo-grid{grid-template-columns:1fr;}
+  }
+
+  /* AVATARS + MEDALS */
+  .lb-row{grid-template-columns:44px 40px 1fr auto auto;}
+  .lb-avatar{
+    width:40px;height:40px;border-radius:50%;object-fit:cover;
+    border:2px solid var(--line);background:#000;
+  }
+  .lb-avatar-fallback{
+    width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:#222;color:var(--yellow);font-family:'Unbounded';font-weight:700;font-size:13px;
+    border:2px solid var(--line);
+  }
+  .lb-row{cursor:pointer;}
+  .medal{font-size:16px;margin-left:2px;}
+
+  @media (max-width:860px){
+    .lb-row{grid-template-columns:28px 32px 1fr auto;}
+  }
+
+  /* MODAL FICHA VOLUNTARIO */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);
+    display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--black2);border:1px solid var(--yellow);border-radius:20px;
+    max-width:480px;width:100%;padding:36px;position:relative;max-height:86vh;overflow-y:auto;
+  }
+  .modal-close{
+    position:absolute;top:18px;right:18px;background:none;border:none;color:var(--gray);
+    font-size:22px;cursor:pointer;line-height:1;
+  }
+  .modal-close:hover{color:var(--yellow);}
+  .modal-head{display:flex;align-items:center;gap:18px;margin-bottom:24px;}
+  .modal-avatar{width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid var(--yellow);}
+  .modal-avatar-fallback{
+    width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:#222;color:var(--yellow);font-family:'Unbounded';font-weight:800;font-size:24px;
+    border:3px solid var(--yellow);
+  }
+  .modal-name{font-family:'Unbounded';font-weight:800;font-size:20px;text-transform:uppercase;line-height:1.15;}
+  .modal-meta{font-size:11px;color:var(--gray);margin-top:6px;letter-spacing:0.04em;}
+  .modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+  .modal-stat{background:#000;border-radius:12px;padding:16px;text-align:center;}
+  .modal-stat b{display:block;font-family:'Unbounded';font-size:26px;color:var(--yellow);font-weight:800;}
+  .modal-stat span{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;}
+  .modal-events-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray);margin-bottom:12px;font-weight:700;}
+  .modal-event-row{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .modal-event-row b{color:var(--yellow);font-family:'Unbounded';font-size:13px;}
+
+  /* GALLERY - así fue la temporada */
+  .gallery-scroll{display:flex;gap:18px;overflow-x:auto;padding-bottom:16px;scroll-snap-type:x mandatory;}
+  .gallery-scroll::-webkit-scrollbar{height:8px;}
+  .gallery-item{
+    flex:0 0 auto;width:300px;scroll-snap-align:start;border-radius:16px;overflow:hidden;
+    position:relative;border:1px solid var(--line);cursor:pointer;background:var(--black2);
+  }
+  .gallery-item img{width:100%;height:340px;object-fit:cover;display:block;transition:transform .4s;}
+  .gallery-item:hover img{transform:scale(1.06);}
+  .gallery-caption{
+    position:absolute;bottom:0;left:0;right:0;padding:16px;
+    background:linear-gradient(to top, rgba(0,0,0,0.92), transparent);
+  }
+  .gallery-caption .g-name{font-family:'Unbounded';font-weight:800;font-size:15px;text-transform:uppercase;color:#fff;}
+  .gallery-caption .g-date{font-size:10px;color:var(--yellow);letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;}
+  .lightbox{
+    position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;
+    z-index:1001;padding:24px;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:92vw;max-height:82vh;border-radius:12px;border:1px solid var(--yellow);}
+  .lightbox-close{position:absolute;top:24px;right:32px;font-size:32px;color:#fff;background:none;border:none;cursor:pointer;}
+
+  /* MAP PLACEHOLDER */
+  .map-placeholder{
+    border:1px dashed var(--line);border-radius:18px;padding:60px 32px;text-align:center;
+    background:var(--black2);
+  }
+  .map-placeholder .map-icon{font-size:36px;margin-bottom:16px;}
+  .map-placeholder p{color:var(--gray);font-size:13px;max-width:420px;margin:0 auto;line-height:1.7;}
+
+  /* footer */
+  footer{padding:60px 0 40px;text-align:center;color:var(--gray);font-size:12px;}
+  footer b{color:var(--yellow);}
+
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:#000;}
+  ::-webkit-scrollbar-thumb{background:var(--yellow-dim);border-radius:10px;}
+
+  @media (max-width:860px){
+    .stats-strip{grid-template-columns:repeat(2,1fr);}
+    .stat-cell:nth-child(2n){border-right:none;}
+    .charts-grid{grid-template-columns:1fr;}
+    .lb-row{grid-template-columns:32px 1fr auto;}
+    .lb-events{display:none;}
+  }
+
+  .fade-up{opacity:0;transform:translateY(24px);animation:fadeUp .7s ease forwards;}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<nav>
+  <div class="container">
+    <div class="logo"><span class="nav-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 792"><path d="M298,697 L296,697 L295,696 L282,696 L281,697 L280,697 L279,698 L274,700 L268,706 L268,707 L266,709 L266,710 L264,713 L264,715 L263,716 L263,720 L262,721 L262,725 L263,726 L263,730 L264,731 L264,733 L266,735 L266,736 L270,740 L271,740 L274,742 L276,742 L277,743 L286,743 L287,742 L289,742 L290,741 L292,741 L294,739 L295,739 L297,737 L298,737 L302,733 L302,732 L304,730 L304,729 L306,726 L306,724 L307,723 L307,720 L308,719 L308,712 L307,711 L307,708 L306,707 L306,705 L304,703 L304,702 Z M342,654 L341,654 L340,653 L338,653 L337,652 L327,652 L326,653 L324,653 L323,654 L321,654 L319,656 L318,656 L316,658 L315,658 L312,661 L312,662 L308,667 L308,669 L306,672 L306,677 L305,678 L305,681 L306,682 L306,687 L307,688 L308,691 L314,697 L315,697 L318,699 L330,699 L331,698 L333,698 L334,697 L339,695 L346,688 L346,687 L350,680 L350,676 L351,675 L351,668 L350,667 L350,664 L349,663 L348,660 Z M384,610 L382,610 L381,609 L377,609 L376,608 L375,608 L374,609 L368,609 L367,610 L366,610 L365,611 L360,613 L354,619 L354,620 L352,622 L352,623 L350,626 L350,628 L349,629 L349,643 L350,644 L352,649 L356,653 L357,653 L360,655 L362,655 L363,656 L372,656 L373,655 L375,655 L376,654 L378,654 L379,653 L380,653 L382,651 L383,651 L388,646 L388,645 L390,643 L390,642 L393,637 L393,634 L394,633 L394,624 L393,623 L393,620 L392,619 L391,616 L387,612 L386,612 Z M716,578 L714,578 L713,577 L710,577 L709,576 L705,576 L704,577 L700,577 L699,578 L697,578 L696,579 L695,579 L693,581 L692,581 L685,588 L685,589 L682,594 L682,596 L681,597 L681,601 L680,602 L680,606 L681,607 L681,611 L682,612 L682,614 L684,616 L684,617 L688,621 L689,621 L692,623 L694,623 L695,624 L703,624 L704,623 L707,623 L708,622 L713,620 L715,618 L716,618 L722,611 L722,610 L724,607 L724,605 L725,604 L725,601 L726,600 L726,593 L725,592 L725,589 L724,588 L724,586 L722,584 L722,583 Z M692,530 L690,530 L689,529 L678,529 L677,530 L675,530 L674,531 L669,533 L662,540 L662,541 L660,543 L660,544 L659,545 L659,547 L658,548 L658,551 L657,552 L657,561 L658,562 L658,564 L659,565 L659,567 L661,569 L661,570 L666,574 L667,574 L668,575 L670,575 L671,576 L681,576 L682,575 L684,575 L685,574 L687,574 L689,572 L690,572 L692,570 L693,570 L698,564 L698,563 L701,558 L701,556 L702,555 L702,542 L701,541 L701,539 L700,538 L700,537 L694,531 L693,531 Z M664,481 L656,481 L655,482 L652,482 L651,483 L646,485 L638,493 L638,494 L635,499 L635,501 L634,502 L634,515 L635,516 L635,518 L636,519 L636,520 L638,522 L638,523 L643,527 L645,527 L646,528 L649,528 L650,529 L655,529 L656,528 L659,528 L660,527 L662,527 L663,526 L666,525 L669,522 L670,522 L675,516 L675,515 L677,512 L677,510 L678,509 L678,506 L679,505 L679,497 L678,496 L678,493 L677,492 L676,489 L671,484 L670,484 L667,482 L665,482 Z M491,249 L66,324 L301,442 L257,708 L447,515 L682,633 Z M411,64 L398,61 L373,61 L344,70 L320,86 L308,98 L294,118 L287,133 L281,155 L280,179 L282,192 L287,207 L296,222 L309,235 L320,242 L349,250 L370,249 L391,243 L405,236 L427,219 L448,191 L457,169 L461,149 L461,130 L458,114 L445,88 L429,73 Z" fill="#e8ff00" fill-rule="nonzero"/></svg></span>MADRID<span>PATINA</span></div>
+    <div class="links">
+      <a href="#stats">Resumen</a>
+      <a href="#ranking">Voluntarios</a>
+      <a href="#eventos">Eventos</a>
+      <a href="#galeria">Temporada</a>
+      <a href="#equipo">Equipo</a>
+      <a href="#mapa">Mapa</a>
+      <a href="#analitica">Analítica</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="logo-watermark wm-hero"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 792"><path d="M298,697 L296,697 L295,696 L282,696 L281,697 L280,697 L279,698 L274,700 L268,706 L268,707 L266,709 L266,710 L264,713 L264,715 L263,716 L263,720 L262,721 L262,725 L263,726 L263,730 L264,731 L264,733 L266,735 L266,736 L270,740 L271,740 L274,742 L276,742 L277,743 L286,743 L287,742 L289,742 L290,741 L292,741 L294,739 L295,739 L297,737 L298,737 L302,733 L302,732 L304,730 L304,729 L306,726 L306,724 L307,723 L307,720 L308,719 L308,712 L307,711 L307,708 L306,707 L306,705 L304,703 L304,702 Z M342,654 L341,654 L340,653 L338,653 L337,652 L327,652 L326,653 L324,653 L323,654 L321,654 L319,656 L318,656 L316,658 L315,658 L312,661 L312,662 L308,667 L308,669 L306,672 L306,677 L305,678 L305,681 L306,682 L306,687 L307,688 L308,691 L314,697 L315,697 L318,699 L330,699 L331,698 L333,698 L334,697 L339,695 L346,688 L346,687 L350,680 L350,676 L351,675 L351,668 L350,667 L350,664 L349,663 L348,660 Z M384,610 L382,610 L381,609 L377,609 L376,608 L375,608 L374,609 L368,609 L367,610 L366,610 L365,611 L360,613 L354,619 L354,620 L352,622 L352,623 L350,626 L350,628 L349,629 L349,643 L350,644 L352,649 L356,653 L357,653 L360,655 L362,655 L363,656 L372,656 L373,655 L375,655 L376,654 L378,654 L379,653 L380,653 L382,651 L383,651 L388,646 L388,645 L390,643 L390,642 L393,637 L393,634 L394,633 L394,624 L393,623 L393,620 L392,619 L391,616 L387,612 L386,612 Z M716,578 L714,578 L713,577 L710,577 L709,576 L705,576 L704,577 L700,577 L699,578 L697,578 L696,579 L695,579 L693,581 L692,581 L685,588 L685,589 L682,594 L682,596 L681,597 L681,601 L680,602 L680,606 L681,607 L681,611 L682,612 L682,614 L684,616 L684,617 L688,621 L689,621 L692,623 L694,623 L695,624 L703,624 L704,623 L707,623 L708,622 L713,620 L715,618 L716,618 L722,611 L722,610 L724,607 L724,605 L725,604 L725,601 L726,600 L726,593 L725,592 L725,589 L724,588 L724,586 L722,584 L722,583 Z M692,530 L690,530 L689,529 L678,529 L677,530 L675,530 L674,531 L669,533 L662,540 L662,541 L660,543 L660,544 L659,545 L659,547 L658,548 L658,551 L657,552 L657,561 L658,562 L658,564 L659,565 L659,567 L661,569 L661,570 L666,574 L667,574 L668,575 L670,575 L671,576 L681,576 L682,575 L684,575 L685,574 L687,574 L689,572 L690,572 L692,570 L693,570 L698,564 L698,563 L701,558 L701,556 L702,555 L702,542 L701,541 L701,539 L700,538 L700,537 L694,531 L693,531 Z M664,481 L656,481 L655,482 L652,482 L651,483 L646,485 L638,493 L638,494 L635,499 L635,501 L634,502 L634,515 L635,516 L635,518 L636,519 L636,520 L638,522 L638,523 L643,527 L645,527 L646,528 L649,528 L650,529 L655,529 L656,528 L659,528 L660,527 L662,527 L663,526 L666,525 L669,522 L670,522 L675,516 L675,515 L677,512 L677,510 L678,509 L678,506 L679,505 L679,497 L678,496 L678,493 L677,492 L676,489 L671,484 L670,484 L667,482 L665,482 Z M491,249 L66,324 L301,442 L257,708 L447,515 L682,633 Z M411,64 L398,61 L373,61 L344,70 L320,86 L308,98 L294,118 L287,133 L281,155 L280,179 L282,192 L287,207 L296,222 L309,235 L320,242 L349,250 L370,249 L391,243 L405,236 L427,219 L448,191 L457,169 L461,149 L461,130 L458,114 L445,88 L429,73 Z" fill="#161616" fill-rule="nonzero"/></svg></div>
+  <div class="container">
+    <div class="hero-tag fade-up">Voluntarios Temporada 2025 / 2026</div>
+    <h1 class="title fade-up" style="animation-delay:.05s">
+      GRACIAS<br><span class="line2">EQUIPO!</span>
+    </h1>
+    <p class="hero-sub fade-up" style="animation-delay:.15s">
+      Cada ruta, cada masterclass, cada evento ha sido posible gracias a
+      <b id="hs-vol">—</b> voluntarios que han sumado
+      <b id="hs-hours">—</b> horas repartidas en
+      <b id="hs-events">—</b> actividades organizadas por MadridPatina.
+    </p>
+
+    <div class="stats-strip fade-up" id="stats" style="animation-delay:.25s">
+      <div class="stat-cell">
+        <div class="stat-num" data-count id="st-hours">0</div>
+        <div class="stat-label">Horas totales</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count id="st-vols">0</div>
+        <div class="stat-label">Voluntarios activos</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count id="st-vols-total">0</div>
+        <div class="stat-label">Voluntarios totales</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count id="st-events">0</div>
+        <div class="stat-label">Eventos totales</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num" data-count id="st-mc">0</div>
+        <div class="stat-label">Masterclass (MC)</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="ranking">
+  <div class="logo-watermark wm-ranking"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 792"><path d="M298,697 L296,697 L295,696 L282,696 L281,697 L280,697 L279,698 L274,700 L268,706 L268,707 L266,709 L266,710 L264,713 L264,715 L263,716 L263,720 L262,721 L262,725 L263,726 L263,730 L264,731 L264,733 L266,735 L266,736 L270,740 L271,740 L274,742 L276,742 L277,743 L286,743 L287,742 L289,742 L290,741 L292,741 L294,739 L295,739 L297,737 L298,737 L302,733 L302,732 L304,730 L304,729 L306,726 L306,724 L307,723 L307,720 L308,719 L308,712 L307,711 L307,708 L306,707 L306,705 L304,703 L304,702 Z M342,654 L341,654 L340,653 L338,653 L337,652 L327,652 L326,653 L324,653 L323,654 L321,654 L319,656 L318,656 L316,658 L315,658 L312,661 L312,662 L308,667 L308,669 L306,672 L306,677 L305,678 L305,681 L306,682 L306,687 L307,688 L308,691 L314,697 L315,697 L318,699 L330,699 L331,698 L333,698 L334,697 L339,695 L346,688 L346,687 L350,680 L350,676 L351,675 L351,668 L350,667 L350,664 L349,663 L348,660 Z M384,610 L382,610 L381,609 L377,609 L376,608 L375,608 L374,609 L368,609 L367,610 L366,610 L365,611 L360,613 L354,619 L354,620 L352,622 L352,623 L350,626 L350,628 L349,629 L349,643 L350,644 L352,649 L356,653 L357,653 L360,655 L362,655 L363,656 L372,656 L373,655 L375,655 L376,654 L378,654 L379,653 L380,653 L382,651 L383,651 L388,646 L388,645 L390,643 L390,642 L393,637 L393,634 L394,633 L394,624 L393,623 L393,620 L392,619 L391,616 L387,612 L386,612 Z M716,578 L714,578 L713,577 L710,577 L709,576 L705,576 L704,577 L700,577 L699,578 L697,578 L696,579 L695,579 L693,581 L692,581 L685,588 L685,589 L682,594 L682,596 L681,597 L681,601 L680,602 L680,606 L681,607 L681,611 L682,612 L682,614 L684,616 L684,617 L688,621 L689,621 L692,623 L694,623 L695,624 L703,624 L704,623 L707,623 L708,622 L713,620 L715,618 L716,618 L722,611 L722,610 L724,607 L724,605 L725,604 L725,601 L726,600 L726,593 L725,592 L725,589 L724,588 L724,586 L722,584 L722,583 Z M692,530 L690,530 L689,529 L678,529 L677,530 L675,530 L674,531 L669,533 L662,540 L662,541 L660,543 L660,544 L659,545 L659,547 L658,548 L658,551 L657,552 L657,561 L658,562 L658,564 L659,565 L659,567 L661,569 L661,570 L666,574 L667,574 L668,575 L670,575 L671,576 L681,576 L682,575 L684,575 L685,574 L687,574 L689,572 L690,572 L692,570 L693,570 L698,564 L698,563 L701,558 L701,556 L702,555 L702,542 L701,541 L701,539 L700,538 L700,537 L694,531 L693,531 Z M664,481 L656,481 L655,482 L652,482 L651,483 L646,485 L638,493 L638,494 L635,499 L635,501 L634,502 L634,515 L635,516 L635,518 L636,519 L636,520 L638,522 L638,523 L643,527 L645,527 L646,528 L649,528 L650,529 L655,529 L656,528 L659,528 L660,527 L662,527 L663,526 L666,525 L669,522 L670,522 L675,516 L675,515 L677,512 L677,510 L678,509 L678,506 L679,505 L679,497 L678,496 L678,493 L677,492 L676,489 L671,484 L670,484 L667,482 L665,482 Z M491,249 L66,324 L301,442 L257,708 L447,515 L682,633 Z M411,64 L398,61 L373,61 L344,70 L320,86 L308,98 L294,118 L287,133 L281,155 L280,179 L282,192 L287,207 L296,222 L309,235 L320,242 L349,250 L370,249 L391,243 L405,236 L427,219 L448,191 L457,169 L461,149 L461,130 L458,114 L445,88 L429,73 Z" fill="#161616" fill-rule="nonzero"/></svg></div>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Aportación individual</div>
+        <h2 class="section-title">Horas por<br>voluntario</h2>
+      </div>
+      <p class="section-desc">Ranking completo de horas aportadas por cada voluntario a lo largo de la temporada. Usa el buscador para encontrar a alguien en concreto.</p>
+    </div>
+
+    <div class="charts-grid" style="margin-bottom:40px;">
+      <div class="card">
+        <h3>Top 15 — horas acumuladas</h3>
+        <div class="chart-wrap tall"><canvas id="chartTop"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Distribución de la participación</h3>
+        <div class="chart-wrap tall"><canvas id="chartDistrib"></canvas></div>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e8ff00" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchInput" type="text" placeholder="Buscar voluntario por nombre...">
+      </div>
+      <div class="sort-toggle">
+        <span class="sort-label">Ordenar por</span>
+        <button class="sort-btn active" data-sort="total">Horas</button>
+        <button class="sort-btn" data-sort="n_events">Eventos</button>
+      </div>
+    </div>
+
+    <div class="leaderboard" id="leaderboard"></div>
+  </div>
+</section>
+
+<section id="eventos">
+  <div class="logo-watermark wm-events"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 792"><path d="M298,697 L296,697 L295,696 L282,696 L281,697 L280,697 L279,698 L274,700 L268,706 L268,707 L266,709 L266,710 L264,713 L264,715 L263,716 L263,720 L262,721 L262,725 L263,726 L263,730 L264,731 L264,733 L266,735 L266,736 L270,740 L271,740 L274,742 L276,742 L277,743 L286,743 L287,742 L289,742 L290,741 L292,741 L294,739 L295,739 L297,737 L298,737 L302,733 L302,732 L304,730 L304,729 L306,726 L306,724 L307,723 L307,720 L308,719 L308,712 L307,711 L307,708 L306,707 L306,705 L304,703 L304,702 Z M342,654 L341,654 L340,653 L338,653 L337,652 L327,652 L326,653 L324,653 L323,654 L321,654 L319,656 L318,656 L316,658 L315,658 L312,661 L312,662 L308,667 L308,669 L306,672 L306,677 L305,678 L305,681 L306,682 L306,687 L307,688 L308,691 L314,697 L315,697 L318,699 L330,699 L331,698 L333,698 L334,697 L339,695 L346,688 L346,687 L350,680 L350,676 L351,675 L351,668 L350,667 L350,664 L349,663 L348,660 Z M384,610 L382,610 L381,609 L377,609 L376,608 L375,608 L374,609 L368,609 L367,610 L366,610 L365,611 L360,613 L354,619 L354,620 L352,622 L352,623 L350,626 L350,628 L349,629 L349,643 L350,644 L352,649 L356,653 L357,653 L360,655 L362,655 L363,656 L372,656 L373,655 L375,655 L376,654 L378,654 L379,653 L380,653 L382,651 L383,651 L388,646 L388,645 L390,643 L390,642 L393,637 L393,634 L394,633 L394,624 L393,623 L393,620 L392,619 L391,616 L387,612 L386,612 Z M716,578 L714,578 L713,577 L710,577 L709,576 L705,576 L704,577 L700,577 L699,578 L697,578 L696,579 L695,579 L693,581 L692,581 L685,588 L685,589 L682,594 L682,596 L681,597 L681,601 L680,602 L680,606 L681,607 L681,611 L682,612 L682,614 L684,616 L684,617 L688,621 L689,621 L692,623 L694,623 L695,624 L703,624 L704,623 L707,623 L708,622 L713,620 L715,618 L716,618 L722,611 L722,610 L724,607 L724,605 L725,604 L725,601 L726,600 L726,593 L725,592 L725,589 L724,588 L724,586 L722,584 L722,583 Z M692,530 L690,530 L689,529 L678,529 L677,530 L675,530 L674,531 L669,533 L662,540 L662,541 L660,543 L660,544 L659,545 L659,547 L658,548 L658,551 L657,552 L657,561 L658,562 L658,564 L659,565 L659,567 L661,569 L661,570 L666,574 L667,574 L668,575 L670,575 L671,576 L681,576 L682,575 L684,575 L685,574 L687,574 L689,572 L690,572 L692,570 L693,570 L698,564 L698,563 L701,558 L701,556 L702,555 L702,542 L701,541 L701,539 L700,538 L700,537 L694,531 L693,531 Z M664,481 L656,481 L655,482 L652,482 L651,483 L646,485 L638,493 L638,494 L635,499 L635,501 L634,502 L634,515 L635,516 L635,518 L636,519 L636,520 L638,522 L638,523 L643,527 L645,527 L646,528 L649,528 L650,529 L655,529 L656,528 L659,528 L660,527 L662,527 L663,526 L666,525 L669,522 L670,522 L675,516 L675,515 L677,512 L677,510 L678,509 L678,506 L679,505 L679,497 L678,496 L678,493 L677,492 L676,489 L671,484 L670,484 L667,482 L665,482 Z M491,249 L66,324 L301,442 L257,708 L447,515 L682,633 Z M411,64 L398,61 L373,61 L344,70 L320,86 L308,98 L294,118 L287,133 L281,155 L280,179 L282,192 L287,207 L296,222 L309,235 L320,242 L349,250 L370,249 L391,243 L405,236 L427,219 L448,191 L457,169 L461,149 L461,130 L458,114 L445,88 L429,73 Z" fill="#161616" fill-rule="nonzero"/></svg></div>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Actividades organizadas</div>
+        <h2 class="section-title">Eventos &<br>masterclass</h2>
+      </div>
+      <p class="section-desc">Todos los eventos de la temporada, con nº de participantes y horas totales. Los marcados <b style="color:#e8ff00">MC</b> son formaciones / masterclass.</p>
+    </div>
+    <div class="events-grid" id="eventsGrid"></div>
+  </div>
+</section>
+
+<section id="galeria">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Recuerdos</div>
+        <h2 class="section-title">Así fue la<br>temporada</h2>
+      </div>
+      <p class="section-desc">Un repaso fotográfico en orden cronológico. Haz clic en cualquier foto para verla en grande.</p>
+    </div>
+    <div class="gallery-scroll" id="galleryScroll"></div>
+  </div>
+</section>
+
+<section id="equipo">
+  <div class="logo-watermark wm-demo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 792"><path d="M298,697 L296,697 L295,696 L282,696 L281,697 L280,697 L279,698 L274,700 L268,706 L268,707 L266,709 L266,710 L264,713 L264,715 L263,716 L263,720 L262,721 L262,725 L263,726 L263,730 L264,731 L264,733 L266,735 L266,736 L270,740 L271,740 L274,742 L276,742 L277,743 L286,743 L287,742 L289,742 L290,741 L292,741 L294,739 L295,739 L297,737 L298,737 L302,733 L302,732 L304,730 L304,729 L306,726 L306,724 L307,723 L307,720 L308,719 L308,712 L307,711 L307,708 L306,707 L306,705 L304,703 L304,702 Z M342,654 L341,654 L340,653 L338,653 L337,652 L327,652 L326,653 L324,653 L323,654 L321,654 L319,656 L318,656 L316,658 L315,658 L312,661 L312,662 L308,667 L308,669 L306,672 L306,677 L305,678 L305,681 L306,682 L306,687 L307,688 L308,691 L314,697 L315,697 L318,699 L330,699 L331,698 L333,698 L334,697 L339,695 L346,688 L346,687 L350,680 L350,676 L351,675 L351,668 L350,667 L350,664 L349,663 L348,660 Z M384,610 L382,610 L381,609 L377,609 L376,608 L375,608 L374,609 L368,609 L367,610 L366,610 L365,611 L360,613 L354,619 L354,620 L352,622 L352,623 L350,626 L350,628 L349,629 L349,643 L350,644 L352,649 L356,653 L357,653 L360,655 L362,655 L363,656 L372,656 L373,655 L375,655 L376,654 L378,654 L379,653 L380,653 L382,651 L383,651 L388,646 L388,645 L390,643 L390,642 L393,637 L393,634 L394,633 L394,624 L393,623 L393,620 L392,619 L391,616 L387,612 L386,612 Z M716,578 L714,578 L713,577 L710,577 L709,576 L705,576 L704,577 L700,577 L699,578 L697,578 L696,579 L695,579 L693,581 L692,581 L685,588 L685,589 L682,594 L682,596 L681,597 L681,601 L680,602 L680,606 L681,607 L681,611 L682,612 L682,614 L684,616 L684,617 L688,621 L689,621 L692,623 L694,623 L695,624 L703,624 L704,623 L707,623 L708,622 L713,620 L715,618 L716,618 L722,611 L722,610 L724,607 L724,605 L725,604 L725,601 L726,600 L726,593 L725,592 L725,589 L724,588 L724,586 L722,584 L722,583 Z M692,530 L690,530 L689,529 L678,529 L677,530 L675,530 L674,531 L669,533 L662,540 L662,541 L660,543 L660,544 L659,545 L659,547 L658,548 L658,551 L657,552 L657,561 L658,562 L658,564 L659,565 L659,567 L661,569 L661,570 L666,574 L667,574 L668,575 L670,575 L671,576 L681,576 L682,575 L684,575 L685,574 L687,574 L689,572 L690,572 L692,570 L693,570 L698,564 L698,563 L701,558 L701,556 L702,555 L702,542 L701,541 L701,539 L700,538 L700,537 L694,531 L693,531 Z M664,481 L656,481 L655,482 L652,482 L651,483 L646,485 L638,493 L638,494 L635,499 L635,501 L634,502 L634,515 L635,516 L635,518 L636,519 L636,520 L638,522 L638,523 L643,527 L645,527 L646,528 L649,528 L650,529 L655,529 L656,528 L659,528 L660,527 L662,527 L663,526 L666,525 L669,522 L670,522 L675,516 L675,515 L677,512 L677,510 L678,509 L678,506 L679,505 L679,497 L678,496 L678,493 L677,492 L676,489 L671,484 L670,484 L667,482 L665,482 Z M491,249 L66,324 L301,442 L257,708 L447,515 L682,633 Z M411,64 L398,61 L373,61 L344,70 L320,86 L308,98 L294,118 L287,133 L281,155 L280,179 L282,192 L287,207 L296,222 L309,235 L320,242 L349,250 L370,249 L391,243 L405,236 L427,219 L448,191 L457,169 L461,149 L461,130 L458,114 L445,88 L429,73 Z" fill="#161616" fill-rule="nonzero"/></svg></div>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Quiénes somos</div>
+        <h2 class="section-title">El equipo de<br>voluntariado</h2>
+      </div>
+      <p class="section-desc">Un vistazo a quién forma el equipo: reparto por género y edad media de las personas que hacen posible cada evento.</p>
+    </div>
+
+    <div class="demo-grid">
+      <div class="card demo-card">
+        <h3>Reparto por género</h3>
+        <div class="chart-wrap" style="height:260px;"><canvas id="chartGender"></canvas></div>
+        <div class="demo-legend">
+          <div class="demo-legend-item"><span class="dot" style="background:var(--yellow)"></span>Chicas <b id="genF">0</b></div>
+          <div class="demo-legend-item"><span class="dot" style="background:#3a3a3a"></span>Chicos <b id="genM">0</b></div>
+        </div>
+      </div>
+      <div class="card demo-card demo-age">
+        <h3>Edad media del equipo</h3>
+        <div class="age-display">
+          <div class="age-number" id="avgAge">0</div>
+          <div class="age-suffix">años</div>
+        </div>
+        <p class="age-note">Calculada sobre las fechas de nacimiento registradas de los voluntarios.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mapa">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Por dónde hemos pasado</div>
+        <h2 class="section-title">Mapa de<br>rutas</h2>
+      </div>
+      <p class="section-desc">Próximamente: la ubicación de cada ruta y evento de la temporada.</p>
+    </div>
+    <div class="map-placeholder" id="mapPlaceholder">
+      <div class="map-icon">📍</div>
+      <p>Aquí verás un mapa interactivo con todas las rutas y puntos de encuentro de la temporada en cuanto añadamos los enlaces de Google Maps de cada evento.</p>
+    </div>
+  </div>
+</section>
+
+<section id="analitica">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Panorama general</div>
+        <h2 class="section-title">Analítica de<br>eventos</h2>
+      </div>
+      <p class="section-desc">Comparativa de participación, horas y tipo de evento a lo largo de la temporada.</p>
+    </div>
+
+    <div class="charts-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="card">
+        <h3>Participantes por evento</h3>
+        <div class="chart-wrap"><canvas id="chartParticipants"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Horas por tipo de evento</h3>
+        <div class="chart-wrap"><canvas id="chartType"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px;">
+      <h3>Evolución de horas totales aportadas por evento (orden cronológico)</h3>
+      <div class="chart-wrap"><canvas id="chartTimeline"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Hecho con <b>♥</b> para el equipo de voluntariado de <b>MadridPatina</b> — Temporada 25/26
+</footer>
+
+<div class="modal-overlay" id="volModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-head">
+      <div id="modalAvatarWrap"></div>
+      <div>
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-meta" id="modalMeta"></div>
+      </div>
+    </div>
+    <div class="modal-stats">
+      <div class="modal-stat"><b id="modalHours">0</b><span>Horas totales</span></div>
+      <div class="modal-stat"><b id="modalEvents">0</b><span>Eventos</span></div>
+    </div>
+    <div class="modal-events-title">Eventos a los que ha asistido</div>
+    <div id="modalEventsList"></div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+const DATA = {"events": [{"col": 21, "name": "RUTA SEM", "tipo": "RX", "date": "2025-09-21T00:00:00", "total_hours": 36, "participants": 18}, {"col": 22, "name": "EVENTO SEM", "tipo": "RX", "date": "2025-09-21T00:00:00", "total_hours": 100, "participants": 17, "foto": "assets/eventos/evento-sem.jpg"}, {"col": 23, "name": "COSTA BLANCA", "tipo": "VN", "date": "2025-09-26T00:00:00", "total_hours": 180, "participants": 15, "foto": "assets/eventos/costa-blanca.jpg"}, {"col": 24, "name": "SANBLAS", "tipo": "RX", "date": "2025-10-26T00:00:00", "total_hours": 54, "participants": 18, "foto": "assets/eventos/sanblas.jpg"}, {"col": 25, "name": "RUTA LUCES", "tipo": "RX", "date": "2025-12-13T00:00:00", "total_hours": 57, "participants": 19, "foto": "assets/eventos/ruta-luces.jpg"}, {"col": 26, "name": "ENSANCHE VALLECAS", "tipo": "RX", "date": "2026-01-25T00:00:00", "total_hours": 57, "participants": 19}, {"col": 27, "name": "HIELO", "tipo": "EV", "date": "2026-02-07T00:00:00", "total_hours": 60, "participants": 15, "foto": "assets/eventos/hielo.jpg"}, {"col": 28, "name": "CURSO VOLUNT.", "tipo": "MC", "date": "2026-03-20T00:00:00", "total_hours": 20, "participants": 10}, {"col": 29, "name": "ANILLO SUR", "tipo": "RX", "date": "2026-03-22T00:00:00", "total_hours": 48, "participants": 16, "foto": "assets/eventos/anillo-sur.jpg"}, {"col": 30, "name": "ANILLO NORTE", "tipo": "RX", "date": "2026-04-18T00:00:00", "total_hours": 45, "participants": 15, "foto": "assets/eventos/anillo-norte.jpg"}, {"col": 31, "name": "PRIMEROS AUXILIOS", "tipo": "MC", "date": "2026-05-30T00:00:00", "total_hours": 31.5, "participants": 7}, {"col": 32, "name": "DIA PATIN SANSE", "tipo": "EV", "date": "2026-05-31T00:00:00", "total_hours": 60, "participants": 15, "foto": "assets/eventos/dia-patin-sanse.jpg"}, {"col": 33, "name": "JUEGOS", "tipo": "MC", "date": "2026-06-05T00:00:00", "total_hours": 14, "participants": 7}, {"col": 34, "name": "CUESTAS", "tipo": "MC", "date": "2026-06-07T00:00:00", "total_hours": 22, "participants": 11}, {"col": 35, "name": "DIA DEPORTE SANSE", "tipo": "EV", "date": "2026-06-07T00:00:00", "total_hours": 5, "participants": 5}, {"col": 36, "name": "RUTA VERANO", "tipo": "RX", "date": "2026-06-13T00:00:00", "total_hours": 69, "participants": 23, "foto": "assets/eventos/ruta-verano.jpg"}, {"col": 37, "name": "DANUBIO", "tipo": "VI", "date": "2026-06-24T00:00:00", "total_hours": 400, "participants": 20, "foto": "assets/eventos/danubio.jpg"}], "volunteers": [{"nombre": "ALBERTO DE LA FUENTE", "tipo": "V", "total": 3, "hours": {"SANBLAS": 3}, "n_events": 1, "genero": "M", "edad": 48}, {"nombre": "ALEJANDRA MARTÍNEZ FERNÁNDEZ", "tipo": "V", "total": 22.5, "hours": {"ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "RUTA VERANO": 3}, "n_events": 7, "genero": "F", "edad": 39, "foto": "foto_13774.jpg", "foto_web": "assets/socios/alejandra-martinez-fernandez.jpg"}, {"nombre": "ANTÍA OUBIÑA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 42, "foto": "foto_12021.jpg", "foto_web": "assets/socios/antia-oubina.jpg"}, {"nombre": "ARANTXA CLEMENTE MORCILLO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 35, "foto": "foto_13259.jpg", "foto_web": "assets/socios/arantxa-clemente-morcillo.jpg"}, {"nombre": "BEATRIZ CAMAÑO", "tipo": "V", "total": 3, "hours": {"RUTA LUCES": 3}, "n_events": 1, "genero": "F", "edad": 29, "foto": "foto_12455.jpg", "foto_web": "assets/socios/beatriz-camano.jpg"}, {"nombre": "BEATRIZ DELGADO", "tipo": "V", "total": 20, "hours": {"DANUBIO": 20}, "n_events": 1, "genero": "F", "edad": 48, "foto": "foto_9863.jpg", "foto_web": "assets/socios/beatriz-delgado.jpg"}, {"nombre": "CARLOS GARCÍA ABELLA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 46, "foto": "foto_9318.jpg", "foto_web": "assets/socios/carlos-garcia-abella.jpg"}, {"nombre": "CARLOS SANZ MORENO", "tipo": "V", "total": 32, "hours": {"COSTA BLANCA": 12, "DANUBIO": 20}, "n_events": 2, "genero": "M", "edad": 41, "foto": "foto_10994.jpg", "foto_web": "assets/socios/carlos-sanz-moreno.jpg"}, {"nombre": "CHARO VIRTO MATÍAS", "tipo": "V", "total": 23, "hours": {"SANBLAS": 3, "DANUBIO": 20}, "n_events": 2, "genero": "F", "edad": 57, "foto": "foto_3259.jpg", "foto_web": "assets/socios/charo-virto-matias.jpg"}, {"nombre": "DANIEL SERRANO", "tipo": "M", "total": 46.5, "hours": {"EVENTO SEM": 8, "ENSANCHE VALLECAS": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 8, "genero": "M", "edad": 40, "foto": "foto_12912.jpg", "foto_web": "assets/socios/daniel-serrano.jpg"}, {"nombre": "DAVID GAMITO", "tipo": "V", "total": 14, "hours": {"EVENTO SEM": 8, "RUTA LUCES": 3, "ANILLO SUR": 3}, "n_events": 3, "genero": "M", "edad": 33, "foto": "foto_13989.jpg", "foto_web": "assets/socios/david-gamito.jpg"}, {"nombre": "DAVID RIVAS COBOS", "tipo": "M", "total": 6, "hours": {"ANILLO SUR": 3, "RUTA VERANO": 3}, "n_events": 2, "genero": "M", "edad": 47, "foto": "foto_11845.jpg", "foto_web": "assets/socios/david-rivas-cobos.jpg"}, {"nombre": "ELENA DE DIOS", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 41, "foto": "foto_9130.jpg", "foto_web": "assets/socios/elena-de-dios.jpg"}, {"nombre": "MARÍA JOSÉ RODRÍGUEZ SANCHEZ BLANCA", "tipo": "V", "total": 43, "hours": {"RUTA SEM": 2, "COSTA BLANCA": 12, "ENSANCHE VALLECAS": 3, "ANILLO NORTE": 3, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 6, "genero": "F", "edad": 39, "foto": "foto_14926.jpg", "foto_web": "assets/socios/maria-jose-rodriguez-sanchez-blanca.jpg"}, {"nombre": "ENRIQUE PARELLADA", "tipo": "V", "total": 5, "hours": {"RUTA SEM": 2, "SANBLAS": 3}, "n_events": 2, "genero": "M", "edad": 60, "foto": "foto_7873.jpg", "foto_web": "assets/socios/enrique-parellada.jpg"}, {"nombre": "ESTHER BOCANEGRA", "tipo": "V", "total": 21, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO NORTE": 3, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3}, "n_events": 8, "genero": "F", "edad": 53, "foto": "foto_7036.jpg", "foto_web": "assets/socios/esther-bocanegra.jpg"}, {"nombre": "FERNANDO DORADO", "tipo": "V", "total": 35, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "RUTA LUCES": 3, "HIELO": 4, "JUEGOS": 2, "DANUBIO": 20}, "n_events": 6, "genero": "M", "edad": 45, "foto": "foto_12974.jpg", "foto_web": "assets/socios/fernando-dorado.jpg"}, {"nombre": "FRANCISCO AMADO FERRERA", "tipo": "V", "total": 22.5, "hours": {"ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 41, "foto": "foto_13775.jpg", "foto_web": "assets/socios/francisco-amado-ferrera.jpg"}, {"nombre": "FRANCISCO PARIENTE", "tipo": "M", "total": 16, "hours": {"COSTA BLANCA": 12, "DIA PATIN SANSE": 4}, "n_events": 2, "genero": "M", "edad": 44, "foto": "foto_8987.jpg", "foto_web": "assets/socios/francisco-pariente.jpg"}, {"nombre": "HELENA GASCON COLOMA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 32, "foto": "foto_13344.jpg", "foto_web": "assets/socios/helena-gascon-coloma.jpg"}, {"nombre": "ICIAR MAULEÓN", "tipo": "M", "total": 62, "hours": {"RUTA SEM": 2, "EVENTO SEM": 6, "COSTA BLANCA": 12, "RUTA LUCES": 3, "HIELO": 4, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "JUEGOS": 2, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 12, "genero": "F", "edad": 50, "foto": "foto_7203.jpg", "foto_web": "assets/socios/iciar-mauleon.jpg"}, {"nombre": "IRENE RODRÍGUEZ", "tipo": "M", "total": 7, "hours": {"EVENTO SEM": 4, "ANILLO NORTE": 3}, "n_events": 2, "genero": "F", "edad": 54, "foto": "foto_8478.jpg", "foto_web": "assets/socios/irene-rodriguez.jpg"}, {"nombre": "IRENE DÍAZ SANZ", "tipo": "M", "total": 56, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "RUTA LUCES": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "JUEGOS": 2, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 9, "genero": "F", "edad": 37, "foto": "foto_13175.jpg", "foto_web": "assets/socios/irene-diaz-sanz.jpg"}, {"nombre": "ISABEL VEGA", "tipo": "V", "total": 5, "hours": {"RUTA SEM": 2, "ENSANCHE VALLECAS": 3}, "n_events": 2, "genero": "F", "edad": 45, "foto": "foto_10282.jpg", "foto_web": "assets/socios/isabel-vega.jpg"}, {"nombre": "IVAN LOPEZ PEREZ", "tipo": "V", "total": 33, "hours": {"SANBLAS": 3, "RUTA LUCES": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 5, "genero": "M", "edad": 44, "foto": "foto_14588.jpg", "foto_web": "assets/socios/ivan-lopez-perez.jpg"}, {"nombre": "JAVIER GRIÑAN LACACI", "tipo": "C", "total": 54, "hours": {"EVENTO SEM": 8, "SANBLAS": 3, "RUTA LUCES": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 11, "genero": "M", "edad": 49, "foto": "foto_1.jpg", "foto_web": "assets/socios/javier-grinan-lacaci.jpg"}, {"nombre": "FRANCISCO JAVIER PEREZ ESCRIVA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 45, "foto": "foto_11239.jpg", "foto_web": "assets/socios/francisco-javier-perez-escriva.jpg"}, {"nombre": "JESSICA ALVES STTRAPASSON", "tipo": "V", "total": 7, "hours": {"RUTA LUCES": 3, "DIA PATIN SANSE": 4}, "n_events": 2, "genero": "F", "edad": 35, "foto": "foto_14352.jpg", "foto_web": "assets/socios/jessica-alves-sttrapasson.jpg"}, {"nombre": "JORGE PÉREZ SEN", "tipo": "M", "total": 33, "hours": {"COSTA BLANCA": 12, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "JUEGOS": 2, "RUTA VERANO": 3}, "n_events": 8, "genero": "M", "edad": 52, "foto": "foto_7462.jpg", "foto_web": "assets/socios/jorge-perez-sen.jpg"}, {"nombre": "JUAN CARLOS GARCÍA RODRÍGUEZ", "tipo": "V", "total": 62, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 12, "genero": "M", "edad": 53, "foto": "foto_11839.jpg", "foto_web": "assets/socios/juan-carlos-garcia-rodriguez.jpg"}, {"nombre": "JUAN JOSÉ MARTÍ", "tipo": "V", "total": 24.5, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5}, "n_events": 8, "genero": "M", "edad": 54, "foto": "foto_7825.jpg", "foto_web": "assets/socios/juan-jose-marti.jpg"}, {"nombre": "JUAN CARLOS ZAZO CALAHORRA", "tipo": "M", "total": 22, "hours": {"RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "ANILLO SUR": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "JUEGOS": 2}, "n_events": 7, "genero": "M", "edad": 51, "foto": "foto_10653.jpg", "foto_web": "assets/socios/juan-carlos-zazo-calahorra.jpg"}, {"nombre": "ENRIQUE LÓPEZ CÁMARA", "tipo": "V", "total": 24, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "ANILLO NORTE": 3, "JUEGOS": 2, "CUESTAS": 2}, "n_events": 9, "genero": "M", "edad": 31, "foto": "foto_14258.jpg", "foto_web": "assets/socios/enrique-lopez-camara.jpg"}, {"nombre": "LAURA IGLESIAS FEBRERO", "tipo": "V", "total": 30, "hours": {"RUTA LUCES": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 4, "genero": "F", "edad": 44, "foto": "foto_13697.jpg", "foto_web": "assets/socios/laura-iglesias-febrero.jpg"}, {"nombre": "LUIS CACHO MONTES", "tipo": "V", "total": 60, "hours": {"RUTA SEM": 2, "EVENTO SEM": 2, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "DIA PATIN SANSE": 4, "CUESTAS": 2, "DANUBIO": 20}, "n_events": 12, "genero": "M", "edad": 45, "foto": "foto_6469.jpg", "foto_web": "assets/socios/luis-cacho-montes.jpg"}, {"nombre": "MARIA JESÚS MIGUEL PÉREZ", "tipo": "V", "total": 8, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3}, "n_events": 3, "genero": "F", "edad": 61, "foto": "foto_6671.jpg", "foto_web": "assets/socios/maria-jesus-miguel-perez.jpg"}, {"nombre": "MARIA JOSÉ SAAVEDRA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 49, "foto": "foto_6292.jpg", "foto_web": "assets/socios/maria-jose-saavedra.jpg"}, {"nombre": "MARIANO MUÑOZ MORENO", "tipo": "V", "total": 28, "hours": {"RUTA SEM": 2, "EVENTO SEM": 4, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "DIA PATIN SANSE": 4}, "n_events": 6, "genero": "M", "edad": 54, "foto": "foto_12139.jpg", "foto_web": "assets/socios/mariano-munoz-moreno.jpg"}, {"nombre": "MARTA DEL AGUILA", "tipo": "M", "total": 28, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "RUTA LUCES": 3, "CURSO VOLUNT.": 2, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 47, "foto": "foto_12662.jpg", "foto_web": "assets/socios/marta-del-aguila.jpg"}, {"nombre": "MARTA BRAVO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 40, "foto": "foto_9502.jpg", "foto_web": "assets/socios/marta-bravo.jpg"}, {"nombre": "MARTA GARCÍA GARCÍA", "tipo": "V", "total": 35, "hours": {"COSTA BLANCA": 12, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 3, "genero": "F", "edad": 47, "foto": "foto_9217.jpg", "foto_web": "assets/socios/marta-garcia-garcia.jpg"}, {"nombre": "MARTA MARCHENA", "tipo": "M", "total": 62, "hours": {"EVENTO SEM": 8, "COSTA BLANCA": 12, "SANBLAS": 3, "RUTA LUCES": 3, "ENSANCHE VALLECAS": 3, "HIELO": 4, "DIA PATIN SANSE": 4, "CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 10, "genero": "F", "edad": 35, "foto": "foto_12650.jpg", "foto_web": "assets/socios/marta-marchena.jpg"}, {"nombre": "EDUARDO MEJUTO MENDIETA", "tipo": "V", "total": 12, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "DIA DEPORTE SANSE": 1}, "n_events": 5, "genero": "M", "edad": 50, "foto": "foto_12341.jpg", "foto_web": "assets/socios/eduardo-mejuto-mendieta.jpg"}, {"nombre": "MARÍA GÓMEZ", "tipo": "V", "total": 15, "hours": {"COSTA BLANCA": 12, "RUTA VERANO": 3}, "n_events": 2, "genero": "F", "edad": 45, "foto": "foto_6276.jpg", "foto_web": "assets/socios/maria-gomez.jpg"}, {"nombre": "MIGUEL ALEGRE CORONADO", "tipo": "V", "total": 21.5, "hours": {"EVENTO SEM": 4, "ENSANCHE VALLECAS": 3, "HIELO": 4, "PRIMEROS AUXILIOS": 4.5, "CUESTAS": 2, "DIA DEPORTE SANSE": 1, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 51, "foto": "foto_9987.jpg", "foto_web": "assets/socios/miguel-alegre-coronado.jpg"}, {"nombre": "MILENI RODRÍGUEZ GÓMEZ", "tipo": "M", "total": 4.5, "hours": {"PRIMEROS AUXILIOS": 4.5}, "n_events": 1, "genero": "F", "edad": 36, "foto": "foto_14857.jpg", "foto_web": "assets/socios/mileni-rodriguez-gomez.jpg"}, {"nombre": "MIMI FORNAGUERA CLARABUCH", "tipo": "V", "total": 25, "hours": {"CUESTAS": 2, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 3, "genero": "F", "edad": 38, "foto": "foto_13356.jpg", "foto_web": "assets/socios/mimi-fornaguera-clarabuch.jpg"}, {"nombre": "MONICA SANZ NIETO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 40, "foto": "foto_10058.jpg", "foto_web": "assets/socios/monica-sanz-nieto.jpg"}, {"nombre": "NATALIA MORALEJO MARCO", "tipo": "V", "total": 6, "hours": {"SANBLAS": 3, "RUTA LUCES": 3}, "n_events": 2, "genero": "F", "edad": 51, "foto": "foto_10042.jpg", "foto_web": "assets/socios/natalia-moralejo-marco.jpg"}, {"nombre": "PABLO GUZMÁN", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 50, "foto": "foto_9363.jpg", "foto_web": "assets/socios/pablo-guzman.jpg"}, {"nombre": "PABLO DE LA IGLESIA", "tipo": "V", "total": 27, "hours": {"RUTA SEM": 2, "ANILLO SUR": 3, "CUESTAS": 2, "DANUBIO": 20}, "n_events": 4, "genero": "M", "edad": 45, "foto": "foto_13043.jpg", "foto_web": "assets/socios/pablo-de-la-iglesia.jpg"}, {"nombre": "PALOMA GONZÁLEZ", "tipo": "M", "total": 15, "hours": {"EVENTO SEM": 4, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "ANILLO SUR": 3, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 54, "foto": "foto_10206.jpg", "foto_web": "assets/socios/paloma-gonzalez.jpg"}, {"nombre": "PATRICIA MUÑOZ HERNÁNDEZ", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 34, "foto": "foto_12172.jpg", "foto_web": "assets/socios/patricia-munoz-hernandez.jpg"}, {"nombre": "PATRICIA PALACIOS VENTAS", "tipo": "V", "total": 13, "hours": {"RUTA SEM": 2, "RUTA LUCES": 3, "HIELO": 4, "DIA PATIN SANSE": 4}, "n_events": 4, "genero": "F", "edad": 40, "foto": "foto_11769.jpg", "foto_web": "assets/socios/patricia-palacios-ventas.jpg"}, {"nombre": "PATRICIA RAMOS GOMEZ", "tipo": "G", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 42, "foto": "foto_3467.jpg", "foto_web": "assets/socios/patricia-ramos-gomez.jpg"}, {"nombre": "RAFAEL OROPEZA", "tipo": "V", "total": 28.5, "hours": {"EVENTO SEM": 8, "ENSANCHE VALLECAS": 3, "ANILLO SUR": 3, "ANILLO NORTE": 3, "PRIMEROS AUXILIOS": 4.5, "DIA PATIN SANSE": 4, "RUTA VERANO": 3}, "n_events": 7, "genero": "M", "edad": 36, "foto": "foto_15063.jpg", "foto_web": "assets/socios/rafael-oropeza.jpg"}, {"nombre": "RAFAEL MORALEJO", "tipo": "V", "total": 6, "hours": {"SANBLAS": 3, "ANILLO NORTE": 3}, "n_events": 2, "genero": "M", "edad": 52, "foto": "foto_10354.jpg", "foto_web": "assets/socios/rafael-moralejo.jpg"}, {"nombre": "RAQUEL SANZ MORENO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 48, "foto": "foto_13537.jpg", "foto_web": "assets/socios/raquel-sanz-moreno.jpg"}, {"nombre": "ROBERTO OLMO BOLUDA", "tipo": "V", "total": 2, "hours": {"RUTA SEM": 2}, "n_events": 1, "genero": "M", "edad": 41, "foto": "foto_12264.jpg", "foto_web": "assets/socios/roberto-olmo-boluda.jpg"}, {"nombre": "RODRIGO MARTÍN GARCÍA", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 49, "foto": "foto_10470.jpg", "foto_web": "assets/socios/rodrigo-martin-garcia.jpg"}, {"nombre": "RUBÉN ALEGRE VILA", "tipo": "V", "total": 47, "hours": {"RUTA SEM": 2, "COSTA BLANCA": 12, "RUTA LUCES": 3, "ANILLO NORTE": 3, "DIA PATIN SANSE": 4, "RUTA VERANO": 3, "DANUBIO": 20}, "n_events": 7, "genero": "M", "edad": 50, "foto": "foto_9331.jpg", "foto_web": "assets/socios/ruben-alegre-vila.jpg"}, {"nombre": "SANDRA BRUECKNER", "tipo": "V", "total": 0, "hours": {"RUTA SEM": 2, "SANBLAS": 3, "ENSANCHE VALLECAS": 3, "CURSO VOLUNT.": 2, "RUTA VERANO": 3}, "n_events": 5, "genero": "F", "edad": 47, "foto": "foto_13800.jpg", "foto_web": "assets/socios/sandra-brueckner.jpg"}, {"nombre": "SANTIAGO CAMACHO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": null}, {"nombre": "TAMAR CHAMIZO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 37, "foto": "foto_11702.jpg", "foto_web": "assets/socios/tamar-chamizo.jpg"}, {"nombre": "VANESA RAMOS GOMEZ", "tipo": "G", "total": 8, "hours": {"EVENTO SEM": 8}, "n_events": 1, "genero": "F", "edad": 48, "foto": "foto_2.jpg", "foto_web": "assets/socios/vanesa-ramos-gomez.jpg"}, {"nombre": "VERONICA PARDO MACHADO", "tipo": "M", "total": 20, "hours": {"DANUBIO": 20}, "n_events": 1, "genero": "F", "edad": 43, "foto": "foto_13408.jpg", "foto_web": "assets/socios/veronica-pardo-machado.jpg"}, {"nombre": "VICTOR CAÑERO", "tipo": "V", "total": 42, "hours": {"COSTA BLANCA": 12, "RUTA LUCES": 3, "ANILLO SUR": 3, "DIA PATIN SANSE": 4, "DANUBIO": 20}, "n_events": 5, "genero": "M", "edad": 48, "foto": "foto_7027.jpg", "foto_web": "assets/socios/victor-canero.jpg"}, {"nombre": "JORGE LOPEZ APARICIO", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "M", "edad": 41, "foto": "foto_13016.jpg", "foto_web": "assets/socios/jorge-lopez-aparicio.jpg"}, {"nombre": "YOSUNE PÉREZ", "tipo": "V", "total": 0, "hours": {}, "n_events": 0, "genero": "F", "edad": 46, "foto": "foto_10182.jpg", "foto_web": "assets/socios/yosune-perez.jpg"}], "meta": {"avg_age": 44.8, "gender_m": 32, "gender_f": 37}};
+
+const YELLOW = '#e8ff00';
+const YELLOW_DIM = 'rgba(232,255,0,0.35)';
+const GRAY = '#8a8a8a';
+
+Chart.defaults.color = '#8a8a8a';
+Chart.defaults.font.family = "'Space Mono', monospace";
+Chart.defaults.font.size = 11;
+
+const vols = DATA.volunteers.slice().sort((a,b)=> (b.total||0) - (a.total||0));
+const events = DATA.events;
+
+const totalHours = vols.reduce((s,v)=>s+(v.total||0),0);
+const totalVols = vols.filter(v=>v.total>0).length;
+const totalVolsAll = vols.length;
+const totalEvents = events.length;
+const totalMC = events.filter(e=>e.tipo==='MC').length;
+
+document.getElementById('hs-vol').textContent = totalVols;
+document.getElementById('hs-hours').textContent = Math.round(totalHours);
+document.getElementById('hs-events').textContent = totalEvents;
+
+function animateCount(el, target, suffix=''){
+  let start = 0;
+  const dur = 1200;
+  const t0 = performance.now();
+  function step(t){
+    const p = Math.min((t-t0)/dur, 1);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.round(target*eased) + suffix;
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+animateCount(document.getElementById('st-hours'), Math.round(totalHours));
+animateCount(document.getElementById('st-vols'), totalVols);
+animateCount(document.getElementById('st-vols-total'), totalVolsAll);
+animateCount(document.getElementById('st-events'), totalEvents);
+animateCount(document.getElementById('st-mc'), totalMC);
+
+// ---------- LEADERBOARD ----------
+const lbEl = document.getElementById('leaderboard');
+const maxHours = Math.max(...vols.map(v=>v.total||0));
+const maxEvents = Math.max(...vols.map(v=>v.n_events||0));
+
+let currentSort = 'total';
+let currentQuery = '';
+
+// animate bar width only once it scrolls into view
+const barObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const fill = entry.target;
+      fill.style.width = fill.dataset.pct + '%';
+      barObserver.unobserve(fill);
+    }
+  });
+}, {threshold:0.4});
+
+function initials(name){
+  return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+const MEDALS = ['🥇','🥈','🥉'];
+
+function renderLeaderboard(){
+  let list = vols.filter(v=>v.nombre.toLowerCase().includes(currentQuery));
+  const key = currentSort;
+  const max = key==='total' ? maxHours : maxEvents;
+  list = list.slice().sort((a,b)=> (b[key]||0) - (a[key]||0));
+
+  lbEl.innerHTML = '';
+  list.forEach((v,i)=>{
+    const row = document.createElement('div');
+    row.className = 'lb-row' + (i===0?' top1':i===1?' top2':i===2?' top3':'');
+    const pct = max ? ((v[key]||0)/max*100) : 0;
+    const avatarHtml = v.foto_web
+      ? `<img class="lb-avatar" src="${v.foto_web}" alt="${v.nombre}">`
+      : `<div class="lb-avatar-fallback">${initials(v.nombre)}</div>`;
+    const medal = i<3 ? `<span class="medal">${MEDALS[i]}</span>` : '';
+    row.innerHTML = `
+      <div class="lb-rank">${String(i+1).padStart(2,'0')}${medal}</div>
+      ${avatarHtml}
+      <div class="lb-name">${v.nombre}</div>
+      <div class="lb-events">${v.n_events} evento${v.n_events===1?'':'s'}</div>
+      <div class="lb-hours">${key==='total' ? v.total+'h' : v.n_events+' ev.'}</div>
+      <div class="lb-bar-bg"><div class="lb-bar-fill" data-pct="${pct}"></div></div>
+    `;
+    row.addEventListener('click', ()=> openVolunteerModal(v));
+    lbEl.appendChild(row);
+    barObserver.observe(row.querySelector('.lb-bar-fill'));
+  });
+}
+renderLeaderboard();
+
+// ---------- VOLUNTEER MODAL ----------
+const volModal = document.getElementById('volModal');
+function openVolunteerModal(v){
+  document.getElementById('modalName').textContent = v.nombre;
+  const metaParts = [];
+  if(v.edad) metaParts.push(v.edad+' años');
+  metaParts.push(v.n_events+' evento'+(v.n_events===1?'':'s'));
+  document.getElementById('modalMeta').textContent = metaParts.join(' · ');
+  document.getElementById('modalHours').textContent = v.total+'h';
+  document.getElementById('modalEvents').textContent = v.n_events;
+  document.getElementById('modalAvatarWrap').innerHTML = v.foto_web
+    ? `<img class="modal-avatar" src="${v.foto_web}" alt="${v.nombre}">`
+    : `<div class="modal-avatar-fallback">${initials(v.nombre)}</div>`;
+  const list = document.getElementById('modalEventsList');
+  list.innerHTML = '';
+  const entries = Object.entries(v.hours || {}).sort((a,b)=>b[1]-a[1]);
+  if(entries.length===0){
+    list.innerHTML = '<div class="modal-event-row">Sin eventos registrados aún</div>';
+  } else {
+    entries.forEach(([evName, h])=>{
+      const row = document.createElement('div');
+      row.className = 'modal-event-row';
+      row.innerHTML = `<span>${evName}</span><b>${h}h</b>`;
+      list.appendChild(row);
+    });
+  }
+  volModal.classList.add('open');
+}
+document.getElementById('modalClose').addEventListener('click', ()=> volModal.classList.remove('open'));
+volModal.addEventListener('click', (e)=>{ if(e.target===volModal) volModal.classList.remove('open'); });
+
+// ---------- LIGHTBOX ----------
+const lightbox = document.getElementById('lightbox');
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  lightbox.classList.add('open');
+}
+document.getElementById('lightboxClose').addEventListener('click', ()=> lightbox.classList.remove('open'));
+lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox) lightbox.classList.remove('open'); });
+
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  currentQuery = e.target.value.toLowerCase();
+  renderLeaderboard();
+});
+
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderLeaderboard();
+  });
+});
+
+// ---------- TOP 15 CHART ----------
+const top15 = vols.slice(0,15);
+function buildChartTop(){
+new Chart(document.getElementById('chartTop'), {
+  type:'bar',
+  data:{
+    labels: top15.map(v=>v.nombre),
+    datasets:[{
+      data: top15.map(v=>v.total),
+      backgroundColor: YELLOW,
+      borderRadius: 4,
+      barThickness: 14,
+    }]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:1100, easing:'easeOutCubic'},
+    plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>c.parsed.x+' horas'}}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:GRAY}},
+      y:{grid:{display:false}, ticks:{color:'#ddd', font:{size:10}}}
+    }
+  }
+});
+}
+
+// ---------- DISTRIBUTION (donut by hour buckets) ----------
+function bucket(v){
+  if(v===0) return '0h';
+  if(v<=10) return '1-10h';
+  if(v<=25) return '11-25h';
+  if(v<=45) return '26-45h';
+  return '45h+';
+}
+const buckets = {'0h':0,'1-10h':0,'11-25h':0,'26-45h':0,'45h+':0};
+vols.forEach(v=> buckets[bucket(v.total||0)]++ );
+function buildChartDistrib(){
+new Chart(document.getElementById('chartDistrib'), {
+  type:'doughnut',
+  data:{
+    labels: Object.keys(buckets),
+    datasets:[{
+      data: Object.values(buckets),
+      backgroundColor: ['#333','#6b6b00','#a3a300','#cfe600', YELLOW],
+      borderColor:'#141414', borderWidth:4,
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:1100, easing:'easeOutCubic'},
+    plugins:{legend:{position:'bottom', labels:{color:'#ccc', boxWidth:12, padding:16}}}
+  }
+});
+}
+
+// ---------- DEMOGRAPHICS ----------
+const meta = DATA.meta || {};
+function buildDemographics(){
+  document.getElementById('genF').textContent = meta.gender_f ?? 0;
+  document.getElementById('genM').textContent = meta.gender_m ?? 0;
+  animateCount(document.getElementById('avgAge'), Math.round(meta.avg_age || 0));
+
+  new Chart(document.getElementById('chartGender'), {
+    type:'doughnut',
+    data:{
+      labels:['Chicas','Chicos'],
+      datasets:[{
+        data:[meta.gender_f||0, meta.gender_m||0],
+        backgroundColor:[YELLOW, '#3a3a3a'],
+        borderColor:'#141414', borderWidth:5,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'68%',
+      animation:{duration:1100, easing:'easeOutCubic'},
+      plugins:{legend:{display:false}}
+    }
+  });
+}
+
+// ---------- EVENTS GRID ----------
+const eventsGrid = document.getElementById('eventsGrid');
+const sortedEvents = events.slice().sort((a,b)=> new Date(a.date) - new Date(b.date));
+sortedEvents.forEach(ev=>{
+  const card = document.createElement('div');
+  card.className = 'event-card' + (ev.tipo==='MC' ? ' mc' : '');
+  const dateStr = new Date(ev.date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
+  const photoHtml = ev.foto ? `<img src="${ev.foto}" alt="${ev.name}" style="width:calc(100% + 48px);margin:-24px -24px 18px;display:block;height:160px;object-fit:cover;cursor:pointer;">` : '';
+  card.innerHTML = `
+    ${photoHtml}
+    <div class="badge">${ev.tipo==='MC' ? 'MASTERCLASS' : ev.tipo}</div>
+    <div class="ev-date">${dateStr}</div>
+    <h4>${ev.name}</h4>
+    <div class="ev-stats">
+      <div class="ev-stat highlight"><b>${ev.participants}</b><span>Voluntarios</span></div>
+      <div class="ev-stat"><b>${ev.total_hours}h</b><span>Horas totales</span></div>
+    </div>
+  `;
+  if(ev.foto){
+    card.querySelector('img').addEventListener('click', (e)=>{ e.stopPropagation(); openLightbox(ev.foto); });
+  }
+  eventsGrid.appendChild(card);
+});
+
+// ---------- GALLERY: ASÍ FUE LA TEMPORADA ----------
+const galleryScroll = document.getElementById('galleryScroll');
+const eventsWithPhoto = sortedEvents.filter(e=>e.foto);
+if(eventsWithPhoto.length === 0){
+  galleryScroll.innerHTML = '<p style="color:var(--gray);font-size:13px;">Aún no hay fotos de eventos cargadas.</p>';
+} else {
+  eventsWithPhoto.forEach(ev=>{
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    const dateStr = new Date(ev.date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
+    item.innerHTML = `
+      <img src="${ev.foto}" alt="${ev.name}">
+      <div class="gallery-caption">
+        <div class="g-name">${ev.name}</div>
+        <div class="g-date">${dateStr}</div>
+      </div>
+    `;
+    item.addEventListener('click', ()=> openLightbox(ev.foto));
+    galleryScroll.appendChild(item);
+  });
+}
+
+// ---------- PARTICIPANTS PER EVENT ----------
+function buildChartParticipants(){
+new Chart(document.getElementById('chartParticipants'), {
+  type:'bar',
+  data:{
+    labels: sortedEvents.map(e=>e.name),
+    datasets:[{
+      data: sortedEvents.map(e=>e.participants),
+      backgroundColor: sortedEvents.map(e=> e.tipo==='MC' ? YELLOW : 'rgba(232,255,0,0.35)'),
+      borderRadius:4,
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:1100, easing:'easeOutCubic'},
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{color:GRAY, maxRotation:60, minRotation:60, font:{size:9}}, grid:{display:false}},
+      y:{grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:GRAY}}
+    }
+  }
+});
+}
+
+// ---------- HOURS BY TYPE ----------
+const typeLabels = {RX:'Rutas (RX)', EV:'Eventos (EV)', MC:'Masterclass (MC)', VN:'Viajes Nac. (VN)', VI:'Viajes Int. (VI)'};
+const typeHours = {};
+events.forEach(e=>{ typeHours[e.tipo] = (typeHours[e.tipo]||0) + e.total_hours; });
+function buildChartType(){
+new Chart(document.getElementById('chartType'), {
+  type:'polarArea',
+  data:{
+    labels: Object.keys(typeHours).map(t=>typeLabels[t]||t),
+    datasets:[{
+      data: Object.values(typeHours),
+      backgroundColor:['rgba(232,255,0,0.85)','rgba(232,255,0,0.6)','rgba(232,255,0,0.4)','rgba(232,255,0,0.25)','rgba(232,255,0,0.15)'],
+      borderColor:'#0a0a0a', borderWidth:2,
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:1100, easing:'easeOutCubic'},
+    scales:{ r:{ grid:{color:'rgba(255,255,255,0.08)'}, ticks:{display:false}, pointLabels:{display:false} } },
+    plugins:{legend:{position:'bottom', labels:{color:'#ccc', boxWidth:12, padding:14}}}
+  }
+});
+}
+
+// ---------- TIMELINE ----------
+function buildChartTimeline(){
+new Chart(document.getElementById('chartTimeline'), {
+  type:'line',
+  data:{
+    labels: sortedEvents.map(e=> new Date(e.date).toLocaleDateString('es-ES',{day:'2-digit',month:'short'})),
+    datasets:[{
+      label:'Horas totales',
+      data: sortedEvents.map(e=>e.total_hours),
+      borderColor: YELLOW,
+      backgroundColor: 'rgba(232,255,0,0.12)',
+      pointBackgroundColor: '#000',
+      pointBorderColor: YELLOW,
+      pointBorderWidth:2,
+      pointRadius:5,
+      tension:0.35,
+      fill:true,
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    animation:{duration:1200, easing:'easeOutCubic'},
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{color:GRAY, font:{size:10}}, grid:{display:false}},
+      y:{grid:{color:'rgba(255,255,255,0.06)'}, ticks:{color:GRAY}}
+    }
+  }
+});
+}
+
+// ---------- LAZY CHART INIT ON SCROLL ----------
+const chartBuilders = {
+  chartTop: buildChartTop,
+  chartDistrib: buildChartDistrib,
+  chartGender: buildDemographics,
+  chartParticipants: buildChartParticipants,
+  chartType: buildChartType,
+  chartTimeline: buildChartTimeline,
+};
+const chartObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      if(chartBuilders[id]){
+        chartBuilders[id]();
+        delete chartBuilders[id];
+      }
+      chartObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold:0.25});
+Object.keys(chartBuilders).forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) chartObserver.observe(el);
+});
+</script>
+</body>
+</html>
